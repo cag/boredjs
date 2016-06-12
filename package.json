@@ -1,0 +1,27 @@
+{
+  "name": "boredjs",
+  "version": "1.0.0",
+  "description": "ARE YOU BORED. WANT TO MAKE A GAME. LOL",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-brunch": "^6.0.4",
+    "brunch": "^2.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cag/boredjs.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Alan Lu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cag/boredjs/issues"
+  },
+  "homepage": "https://github.com/cag/boredjs#readme"
+}
