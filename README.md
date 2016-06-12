@@ -1,1 +1,3 @@
-# supreme-lamp
+# boredjs
+
+ARE YOU BORED. WANT TO MAKE A GAME. LOL
