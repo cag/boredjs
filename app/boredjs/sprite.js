@@ -1,25 +1,25 @@
-define(['jquery'], function($) {
+// define(['jquery'], function($) {
+import $ from 'jquery'
+
     // Similar to the map module, sprites are loaded via JSON from
     // a url constructed from @name.
     let url_prefix = 'assets/';
     let url_suffix = '.json';
     
-    return {
+    export default {
         Sprite: class {
             constructor(name, onload) {
                 this.name = name;
                 this.loaded = false;
-                let cb_target = this;
-                $.getJSON(url_prefix + this.name + url_suffix, function(data) {
+                $.getJSON(url_prefix + this.name + url_suffix, (data) => {
                     try {
-                        cb_target.load(data, onload);
-                    } catch (e) {
-                        throw 'could not load sprite ' +
-                            url_prefix + cb_target.name + url_suffix;
+                        this.load(data, onload);
+                    } catch (err) {
+                        throw `could not load sprite ${name}: ${err}`;
                     }
-                    return;
+                }).fail((jqxhr, textStatus, err) => {
+                    console.error(`error loading sprite ${name}: ${err}`);
                 });
-                return;
             }
         
             // The sprite JSON format is as follows:
@@ -152,5 +152,5 @@ define(['jquery'], function($) {
             }
         }
     };
-});
+// });
 

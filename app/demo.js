@@ -1,9 +1,16 @@
-define(['./cg'],
-  function(cg) {
-    let {input, audio, util, game, geometry, entity, physics} = cg;
+// define(['./cg'],
+//   function(cg) {
+import input from 'boredjs/input'
+import audio from 'boredjs/audio'
+import util from 'boredjs/util'
+import game from 'boredjs/game'
+import geometry from 'boredjs/geometry'
+import entity from 'boredjs/entity'
+import physics from 'boredjs/physics'
+
     let player_sprite = null;
     
-    return {
+    export default {
         setupSky(layer) {
             layer.draw = function(context, targx, targy) {
                 let cam = this.map.camera;
@@ -232,5 +239,5 @@ define(['./cg'],
             return;
         }
     };
-});
+// });
 

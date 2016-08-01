@@ -1,4 +1,8 @@
-define(['./util', './input', './audio'], function(util, input, audio) {
+// define(['./util', './input', './audio'], function(util, input, audio) {
+import util from './util'
+import input from './input'
+import audio from './audio'
+
     let canvas = null;
     let context = null;
     let game_w = 0;
@@ -36,9 +40,7 @@ define(['./util', './input', './audio'], function(util, input, audio) {
     
     // Advances the execution state of a set of coroutines with a parameter
     let advanceCoroutines = function(coroutines, arg) {
-        let iterable = __range__(coroutines.length-1, 0, true);
-        for (let j = iterable.length - 1; j >= 0; j--) {
-            let i = iterable[j];
+        for (let i = coroutines.length-1; i >= 0; j--) {
             let coroutine = coroutines[i];
             coroutine.next(arg);
             if (coroutine.done) {
@@ -87,7 +89,7 @@ define(['./util', './input', './audio'], function(util, input, audio) {
         }
         return;
     };
-    return {
+    export default {
         resizeCanvasToAspectRatio,
     
         // Canvas instance.
@@ -198,14 +200,14 @@ define(['./util', './input', './audio'], function(util, input, audio) {
             }
         }
     };
-});
+// });
 
-function __range__(left, right, inclusive) {
-  let range = [];
-  let ascending = left < right;
-  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i);
-  }
-  return range;
-}
+// function __range__(left, right, inclusive) {
+//   let range = [];
+//   let ascending = left < right;
+//   let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+//   for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+//     range.push(i);
+//   }
+//   return range;
+// }

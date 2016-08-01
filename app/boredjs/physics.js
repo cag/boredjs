@@ -1,6 +1,7 @@
-define(['./game'], game =>
+// define(['./game'], game =>
+import game from './game'
     // Using ye old midpoint method
-    ({
+    export default {
         integrate(obj, dt) {
             let v = obj.velocity || [0, 0];
             let a = obj.acceleration || [0, 0];
@@ -20,6 +21,6 @@ define(['./game'], game =>
             obj.velocity = v;
             return;
         }
-    })
-);
+    };
+// );
 

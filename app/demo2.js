@@ -1,6 +1,13 @@
-define(['./cg', './ui'],
-  function(cg, ui) {
-    let {input, audio, util, game, geometry, entity, physics, map} = cg;
+// define(['./cg', './ui'],
+//   function(cg, ui) {
+import input from 'boredjs/input'
+import audio from 'boredjs/audio'
+import util from 'boredjs/util'
+import game from 'boredjs/game'
+import geometry from 'boredjs/geometry'
+import entity from 'boredjs/entity'
+import physics from 'boredjs/physics'
+import map from 'boredjs/map'
 
     let fadeIn = function(duration, callback) {
         let t_accum = 0.0;
@@ -49,7 +56,7 @@ define(['./cg', './ui'],
             super(x, y, shape, sprite);
             this.dir = 'down';
             this.state = `look ${this.dir}`;
-            ({ map } = game.currentScene());
+            let map = game.currentScene().map;
             let player = this;
             let ent_layer = map.getLayerByName('Entities');
 
@@ -172,7 +179,7 @@ define(['./cg', './ui'],
     let player_shape = null;
     let player_sprite = null;
 
-    return {
+    export default {
         setPlayerMetadata(shape, sprite) {
             player_shape = shape;
             player_sprite = sprite;
@@ -203,4 +210,4 @@ define(['./cg', './ui'],
 
         DemoScene
     };
-});
+// });

@@ -1,6 +1,12 @@
-define(['./cg'],
-  function(cg) {
-    let {input, audio, util, game, geometry, entity, physics} = cg;
+// define(['./cg'],
+//   function(cg) {
+import input from 'boredjs/input'
+import audio from 'boredjs/audio'
+import util from 'boredjs/util'
+import game from 'boredjs/game'
+import geometry from 'boredjs/geometry'
+import entity from 'boredjs/entity'
+import physics from 'boredjs/physics'
 
     let right_to_left = false;
 
@@ -80,7 +86,7 @@ define(['./cg'],
         return;
     };
 
-    return {
+    export default {
         isRightToLeft() { return right_to_left; },
 
         textBoxDialog(text, x, y, width, height, speed, style, context, callback) {
@@ -147,4 +153,4 @@ define(['./cg'],
             return game.invoke(util.prepareCoroutineSet(updateGenerator, drawGenerator));
         }
     };
-});
+// });

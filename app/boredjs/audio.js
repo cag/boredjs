@@ -1,4 +1,5 @@
-define(['./util'], function(util) {
+// define(['./util'], function(util) {
+import util from './util'
     // A prefix and suffix applied to names passed into sound
     // constructors so that they load from the right place.
     let url_prefix = 'assets/';
@@ -14,7 +15,7 @@ define(['./util'], function(util) {
     let audio_context = null;
     
     // Initializes the audio system.
-    return {
+    export default {
         init() {
             if (typeof AudioContext !== 'undefined' && AudioContext !== null) {
                 audio_context = new AudioContext();
@@ -80,5 +81,5 @@ define(['./util'], function(util) {
         // Pythagorean tuning in A440 has a C4 of 260.741 Hz
         pythagorean_c4: 260.741
     };
-});
+// });
 

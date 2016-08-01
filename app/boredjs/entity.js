@@ -1,7 +1,8 @@
-define(['./geometry'], geometry =>
+// define(['./geometry'], geometry =>
+import geometry from './geometry'
     // An entity which may be placed in a map and scripted with
     // update, draw, onCollide, and onObstruct callbacks.
-    ({
+    export default {
         Entity: class {
             constructor(x, y, shape) {
                 this.x = x;
@@ -44,6 +45,5 @@ define(['./geometry'], geometry =>
                 return false;
             }
         }
-    })
-);
-
+    };
+// );

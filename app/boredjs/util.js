@@ -1,10 +1,8 @@
-define(function() {
+// define(function() {
     // An implementation of insertion sort
     let insertionSort = function(ary, cmp) {
         cmp = cmp || function(a, b) { if (a < b) { return -1; } else if (a === b) { return 0; } else { return 1; } };
-        let iterable = __range__(1, ary.length, false);
-        for (let k = 0; k < iterable.length; k++) {
-            let i = iterable[k];
+        for (let i = 1; i < ary.length; i++) {
             let tmp = ary[i];
             let j = i;
             while (j > 0 && (cmp(ary[j - 1], tmp)) > 0) {
@@ -91,7 +89,7 @@ define(function() {
     })();
     
     // An epsilon for things involving real numbers and convergence.
-    return {
+    export default {
         EPSILON: Math.pow(2, -50),
     
         time() { return .001 * pNow.call(window.performance); },
@@ -132,13 +130,13 @@ define(function() {
             };
         }
     };
-});
-function __range__(left, right, inclusive) {
-  let range = [];
-  let ascending = left < right;
-  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i);
-  }
-  return range;
-}
+// });
+// function __range__(left, right, inclusive) {
+//   let range = [];
+//   let ascending = left < right;
+//   let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+//   for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+//     range.push(i);
+//   }
+//   return range;
+// }

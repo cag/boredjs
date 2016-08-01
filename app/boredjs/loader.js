@@ -1,4 +1,7 @@
-define(['./map', './sprite', './audio'], (map, sprite, audio) =>
+// define(['./map', './sprite', './audio'], (map, sprite, audio) =>
+import map from './map'
+import sprite from './sprite'
+import audio from './audio'
     // A scene for loading resources. Pass in an object of the form:
     // 
     //     {
@@ -29,7 +32,7 @@ define(['./map', './sprite', './audio'], (map, sprite, audio) =>
     // 
     // This object will be passed into the `@onload` callback, which
     // will be a good time for setting up a new scene to switch into.
-    ({
+    export default {
         LoaderScene: class {
             constructor(resources, onload) {
                 this.resources = resources;
@@ -113,6 +116,6 @@ define(['./map', './sprite', './audio'], (map, sprite, audio) =>
                 return;
             }
         }
-    })
-);
+    };
+// );
 

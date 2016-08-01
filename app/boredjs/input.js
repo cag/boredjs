@@ -1,6 +1,6 @@
-define(() =>
+// define(() =>
     // A default map of button names to key code values.
-    ({
+    export default {
         default_buttons: {
             left: 37,
             up: 38,
@@ -67,6 +67,6 @@ define(() =>
             }
             return;
         }
-    })
-);
+    };
+// );
 

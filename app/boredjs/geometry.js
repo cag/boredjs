@@ -1,4 +1,4 @@
-define(function() {
+// define(function() {
     // These constants determine how debug drawing is rendered when
     // shape subpaths are being created.
     let POINT_RADIUS = 2;
@@ -81,9 +81,7 @@ define(function() {
       pen_amt = Number.POSITIVE_INFINITY,
       pen_dir,
       negate = false) {
-        let iterable = __range__(0, p.normals.length, false);
-        for (let j = 0; j < iterable.length; j++) {
-            let i = iterable[j];
+        for (let i = 0; i < p.normals.length; i++) {
             let normal = p.normals[i];
             let p_bounds = p.bounds_on_normals[i];
             
@@ -255,7 +253,7 @@ define(function() {
         }
     };
     
-    return {
+    export default {
         dotProduct,
     
         // A point.
@@ -308,9 +306,7 @@ define(function() {
             
                 let ccw = null;
                 let ptslen = points.length;
-                let iterable = __range__(0, ptslen, false);
-                for (let j1 = 0; j1 < iterable.length; j1++) {
-                    var i = iterable[j1];
+                for (let i = 0; i < ptslen; i++) {
                     var j = (i + 1) % ptslen;
                     let k = (i + 2) % ptslen;
                     let edge1 = [points[j][0] - points[i][0],
@@ -336,9 +332,7 @@ define(function() {
             
                 let normals = [];
                 let bounds_on_normals = [];
-                let iterable1 = __range__(0, ptslen, false);
-                for (let k1 = 0; k1 < iterable1.length; k1++) {
-                    var i = iterable1[k1];
+                for (let i = 0; i < ptslen; i++) {
                     var j = (i + 1) % ptslen;
                     let normal = normalize([this.points[i][1] - this.points[j][1],
                         this.points[j][0] - this.points[i][0]]);
@@ -369,9 +363,7 @@ define(function() {
             subpath(context, offx, offy) {
                 let pts = this.points;
                 context.moveTo(pts[0][0] + offx, pts[0][1] + offy);
-                let iterable = __range__(1, pts.length, false);
-                for (let j = 0; j < iterable.length; j++) {
-                    let i = iterable[j];
+                for (let i = 1; i < pts.length; i++) {
                     context.lineTo(pts[i][0] + offx, pts[i][1] + offy);
                 }
                 context.closePath();
@@ -420,15 +412,14 @@ define(function() {
             return false;
         }
     };
-});
+// });
 
-
-function __range__(left, right, inclusive) {
-  let range = [];
-  let ascending = left < right;
-  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i);
-  }
-  return range;
-}
+// function __range__(left, right, inclusive) {
+//   let range = [];
+//   let ascending = left < right;
+//   let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+//   for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+//     range.push(i);
+//   }
+//   return range;
+// }

@@ -1,5 +1,11 @@
-define(['jquery', './game', './input', './entity', './geometry', './util'],
-  function($, game, input, entity, geometry, util) {
+// define(['jquery', './game', './input', './entity', './geometry', './util'],
+  // function($, game, input, entity, geometry, util) {
+import $ from 'jquery'
+import game from './game'
+import input from './input'
+import entity from './entity'
+import geometry from './geometry'
+import util from './util'
     // A prefix and suffix applied to names passed into map constructors
     // so that it loads from the right place.
     let numt;
@@ -88,9 +94,10 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                 return tcanvas;
             };
             
-            this.tiles = __range__(0, numt, false).map(i => grabTile(i % numtx, (i / numtx) | 0));
-            
-            return;
+            this.tiles = [];
+            for(let i = 0; i < numt; i++) {
+                this.tiles[i] = grabTile(i % numtx, (i / numtx) | 0);
+            }
         }
         
         hasGID(gid) { return this.first_gid <= gid && gid < this.first_gid + this.num_tiles; }
@@ -155,12 +162,8 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
             let { width } = this;
             let { height } = this;
             this.data = [];
-            let iterable = __range__(0, width, false);
-            for (let k = 0; k < iterable.length; k++) {
-                let i = iterable[k];
-                let iterable1 = __range__(0, height, false);
-                for (let i1 = 0; i1 < iterable1.length; i1++) {
-                    let j = iterable1[i1];
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     this.data.push(parseGID(json_data.data[i + j * width]));
                 }
             }
@@ -173,8 +176,6 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
             } else {
                 this.parallax = 1;
             }
-            
-            return;
         }
         
         buildCache() {
@@ -201,17 +202,11 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                 return canvas;
             };
             this.cache = [];
-            let iterable = __range__(0, cw, false);
-            for (let k = 0; k < iterable.length; k++) {
-                let i = iterable[k];
-                let iterable1 = __range__(0, ch, false);
-                for (let i1 = 0; i1 < iterable1.length; i1++) {
-                    let j = iterable1[i1];
+            for (let i = 0; i < cw; i++) {
+                for (let j = 0; j < ch; j++) {
                     this.cache.push(cacheBlock(i * lcf, j * lcf));
                 }
             }
-            
-            return;
         }
         
         setTile(txi, tyi, td) {
@@ -237,12 +232,8 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
             let tw = map.tilewidth;
             let th = map.tileheight;
             let { data } = this;
-            let iterable = __range__(lowtx, hightx, false);
-            for (let k = 0; k < iterable.length; k++) {
-                let i = iterable[k];
-                let iterable1 = __range__(lowty, highty, false);
-                for (let i1 = 0; i1 < iterable1.length; i1++) {
-                    let j = iterable1[i1];
+            for (let i = lowtx; i < hightx; i++) {
+                for (let j = lowty; j < highty; j++) {
                     let datum = data[i][j];
                     map.drawTile(context,
                         datum[0], datum[1], datum[2], datum[3],
@@ -293,12 +284,8 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                 let highby = Math.min(this.cache_height,
                     Math.ceil((mlsy + h) / bh));
                 
-                let iterable = __range__(lowbx, highbx, false);
-                for (let k = 0; k < iterable.length; k++) {
-                    let i = iterable[k];
-                    let iterable1 = __range__(lowby, highby, false);
-                    for (let i1 = 0; i1 < iterable1.length; i1++) {
-                        let j = iterable1[i1];
+                for (let i = lowbx; i < highbx; i++) {
+                    for (let j = lowby; j < highby; j++) {
                         context.drawImage(cache[i][j],
                             Math.round(destx + i * bw),
                             Math.round(desty + j * bh));
@@ -316,7 +303,6 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
             }
                 
             context.restore();
-            return;
         }
     }
     
@@ -417,9 +403,7 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                         new Polygon(object.polygon.map(point => [point.x, point.y])));
                 } else if (object.polyline != null) {
                     // Polylines are modeled as multiple polygons.
-                    let iterable = __range__(0, object.polyline.length - 1, false);
-                    for (let k = 0; k < iterable.length; k++) {
-                        let i = iterable[k];
+                    for (let i = 0; i < object.polyline.length - 1; i++) {
                         let point_a = object.polyline[i];
                         let point_b = object.polyline[i + 1];
                         var ent = new Entity(objx, objy,
@@ -505,16 +489,17 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
     
     // Maps are loaded from a URL containing `@name` and callbacks are
     // searched for inside of the `@script` passed.
-    return {
+    export default {
         Map: class {
             constructor(name, script, onload) {
                 this.name = name;
                 this.script = script;
                 this.loaded = false;
                 this.entities = [];
-                let cb_target = this;
                 $.getJSON(url_prefix + this.name + url_suffix,
-                    (function(data) { cb_target.load(data, onload); return; }));
+                    (data) => { this.load(data, onload); }).fail((jqxhr, textStatus, error) => {
+                        console.error(`Error loading map ${name}: ${error}`);
+                    });
                 return;
             }
         
@@ -602,9 +587,7 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                 let ents = this.entities;
                 util.persistentSort(ents, byLeftBound);
                 let j = 0;
-                let iterable = __range__(1, ents.length, false);
-                for (let i1 = 0; i1 < iterable.length; i1++) {
-                    let i = iterable[i1];
+                for (let i = 1; i < ents.length; i++) {
                     let enti = this.entities[i];
                 
                     while (j < i &&
@@ -613,9 +596,7 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                         ++j;
                     }
                 
-                    let iterable1 = __range__(j, i, false);
-                    for (let j1 = 0; j1 < iterable1.length; j1++) {
-                        let k = iterable1[j1];
+                    for (let k = j; k < i; k++) {
                         this.doCollision(enti, this.entities[k]);
                     }
                 }
@@ -715,10 +696,7 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                 let yoff = targy - cam.y;
             
                 let found_first = false;
-                let iterable = __range__(0, this.entities.length, false);
-                for (let j = 0; j < iterable.length; j++) {
-                    let i = iterable[j];
-                    let ent = this.entities[i];
+                for (let ent of this.entities) {
                     if (ent.boundsIntersects(cam)) {
                         ent.shapeSubpath(context, xoff, yoff);
                         found_first = true;
@@ -733,8 +711,6 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
                         layer.debugDraw(context, targx, targy);
                     }
                 }
-            
-                return;
             }
         },
     
@@ -783,15 +759,15 @@ define(['jquery', './game', './input', './entity', './geometry', './util'],
             }
         }
     };
-});
+// });
 
 
-function __range__(left, right, inclusive) {
-  let range = [];
-  let ascending = left < right;
-  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i);
-  }
-  return range;
-}
+// function __range__(left, right, inclusive) {
+//   let range = [];
+//   let ascending = left < right;
+//   let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+//   for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+//     range.push(i);
+//   }
+//   return range;
+// }
