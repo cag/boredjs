@@ -393,17 +393,16 @@
                 if (test != null) {
                     return test(shape_a, x_a, y_a, shape_b, x_b, y_b);
                 }
-            } else {
-                test = intersection_test_map[shape_b.type];
+            }
+            test = intersection_test_map[shape_b.type];
+            if (test != null) {
+                test = test[shape_a.type];
                 if (test != null) {
-                    test = test[shape_a.type];
-                    if (test != null) {
-                        let result = test(shape_b, x_b, y_b, shape_a, x_a, y_a);
-                        if (result) {
-                            return [result[0], [-result[1][0], -result[1][1]]];
-                        } else {
-                            return false;
-                        }
+                    let result = test(shape_b, x_b, y_b, shape_a, x_a, y_a);
+                    if (result) {
+                        return [result[0], [-result[1][0], -result[1][1]]];
+                    } else {
+                        return false;
                     }
                 }
             }

@@ -163,8 +163,9 @@ import util from './util'
             let { height } = this;
             this.data = [];
             for (let i = 0; i < width; i++) {
+                this.data[i] = [];
                 for (let j = 0; j < height; j++) {
-                    this.data.push(parseGID(json_data.data[i + j * width]));
+                    this.data[i][j] = parseGID(json_data.data[i + j * width]);
                 }
             }
             
@@ -203,8 +204,9 @@ import util from './util'
             };
             this.cache = [];
             for (let i = 0; i < cw; i++) {
+                this.cache[i] = []
                 for (let j = 0; j < ch; j++) {
-                    this.cache.push(cacheBlock(i * lcf, j * lcf));
+                    this.cache[i][j] = cacheBlock(i * lcf, j * lcf);
                 }
             }
         }
@@ -644,7 +646,7 @@ import util from './util'
                             ent_b.y += notrat * proj_y;
                         }
                     
-                        if (ent_a.onCollide != null) { ent_a.onObstruct(ent_b, collision_info); }
+                        if (ent_a.onObstruct != null) { ent_a.onObstruct(ent_b, collision_info); }
                         if (ent_b.onObstruct != null) { ent_b.onObstruct(ent_a, neg_collision_info); }
                     }
                 }
