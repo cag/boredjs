@@ -39,7 +39,7 @@ let handleKeyUp = function(event) {
 
 // Advances the execution state of a set of coroutines with a parameter
 let advanceCoroutines = function(coroutines, arg) {
-    for (let i = coroutines.length-1; i >= 0; j--) {
+    for (let i = coroutines.length-1; i >= 0; i--) {
         let coroutine = coroutines[i];
         coroutine.next(arg);
         if (coroutine.done) {

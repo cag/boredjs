@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import $ from 'jquery'
 import game from 'boredjs/game'
 import loader from 'boredjs/loader'
@@ -31,12 +32,12 @@ $(() => {
             demo.setPlayerSprite(loaded.sprites.player);
             let demo_scene = new map.MapScene(loaded.maps.demo);
 
-            demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.joanna);
+            demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.demo2player);
             let demo_scene2 = new demo2.DemoScene(loaded.maps.demo2);
 
             // let zonko_desert = new demo2.DemoScene(loaded.maps.zonko_desert);
 
-            game.switchScene(demo_scene);
+            game.switchScene(demo_scene2);
         });
 
     game.init(320, 240, 1 / 60, 1 / 20, loader_scene);

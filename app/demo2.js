@@ -6,6 +6,7 @@ import geometry from 'boredjs/geometry'
 import entity from 'boredjs/entity'
 import physics from 'boredjs/physics'
 import map from 'boredjs/map'
+import ui from 'ui'
 
 let fadeIn = function(duration, callback) {
     let t_accum = 0.0;
@@ -68,14 +69,12 @@ class PlayerCharacter extends Character {
                 player.sprite.startAnimation(`look ${player.dir}`);
                 ent.onActivate(ent);
             }
-            return;
         };
         ent_layer.addEntity(this.activation_point_check);
         
         map.camera.post_update = function(dt) {
             this.x = player.x;
             this.y = player.y;
-            return;
         };
     }
 
@@ -87,7 +86,6 @@ class PlayerCharacter extends Character {
                 sprite.startAnimation(name);
                 state = name;
             }
-            return;
         };
 
         if (game.state === 'world') {
@@ -107,21 +105,21 @@ class PlayerCharacter extends Character {
             }
 
             if (vxc < 0.0) {
-                if (vyc < 0.0) {
-                    this.dir = 'up-left';
-                } else if (vyc > 0.0) {
-                    this.dir = 'down-left';
-                } else {
+                // if (vyc < 0.0) {
+                //     this.dir = 'up-left';
+                // } else if (vyc > 0.0) {
+                //     this.dir = 'down-left';
+                // } else {
                     this.dir = 'left';
-                }
+                // }
             } else if (vxc > 0.0) {
-                if (vyc < 0.0) {
-                    this.dir = 'up-right';
-                } else if (vyc > 0.0) {
-                    this.dir = 'down-right';
-                } else {
+                // if (vyc < 0.0) {
+                //     this.dir = 'up-right';
+                // } else if (vyc > 0.0) {
+                //     this.dir = 'down-right';
+                // } else {
                     this.dir = 'right';
-                }
+                // }
             } else {
                 if (vyc < 0.0) {
                     this.dir = 'up';

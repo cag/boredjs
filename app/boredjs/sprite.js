@@ -104,9 +104,12 @@ export default {
     
         startAnimation(anim_name, anim_speed = 1) {
             this.current_animation = this.animations[anim_name];
+            if(!this.current_animation) {
+                console.warn(`${anim_name} is not an animation for ${this.name}`);
+                this.current_animation = { frames:[[0, 1.0]], loop: false, duration: 1.0 };
+            }
             this.animation_time = 0;
             this.animation_speed = anim_speed;
-            return;
         }
     
         update(dt) {
