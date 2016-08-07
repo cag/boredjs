@@ -1,4 +1,6 @@
 import $ from 'jquery'
+import base64 from 'base64-js'
+import pako from 'pako'
 import game from './game'
 import input from './input'
 import entity from './entity'
@@ -61,7 +63,6 @@ class TileSet {
             if (onload != null) { return onload(); }
         };
         this.image.src = url_prefix + json_data.image;
-        return;
     }
     
     setupTileMapping() {
@@ -116,7 +117,6 @@ class TileSet {
         context.drawImage(this.tiles[idx], 0, 0);
         
         context.restore();
-        return;
     }
 }
 
@@ -132,7 +132,6 @@ class Layer {
         this.y = json_data.y;
         this.width = json_data.width;
         this.height = json_data.height;
-        return;
     }
 }
 
@@ -158,13 +157,18 @@ class TileLayer extends Layer {
             return [gid, flip_h, flip_v, flip_d];
         };
         
-        let { width } = this;
-        let { height } = this;
+        let { width, height } = this,
+            data = json_data.data;
+
+        if(json_data.encoding === 'base64' && json_data.compression === 'zlib') {
+            data = new Uint32Array(pako.inflate(base64.toByteArray(data)).buffer);
+        }
+
         this.data = [];
         for (let i = 0; i < width; i++) {
             this.data[i] = [];
             for (let j = 0; j < height; j++) {
-                this.data[i][j] = parseGID(json_data.data[i + j * width]);
+                this.data[i][j] = parseGID(data[i + j * width]);
             }
         }
         

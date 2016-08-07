@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8">
- <tileset firstgid="1" name="image2" tilewidth="8" tileheight="8">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" nextobjectid="6">
+ <tileset firstgid="1" name="image2" tilewidth="8" tileheight="8" tilecount="1024">
   <image source="image2.png" width="256" height="256"/>
   <terraintypes>
    <terrain name="empty" tile="-1"/>
@@ -26,7 +26,7 @@
   </data>
  </layer>
  <objectgroup name="Entities">
-  <object name="player start" x="100" y="84">
+  <object id="1" name="player start" x="23" y="98">
    <properties>
     <property name="onStart" value="handlePlayerStart"/>
    </properties>
@@ -36,12 +36,12 @@
   <properties>
    <property name="obstructs" value="0"/>
   </properties>
-  <object x="0" y="0" width="96" height="64"/>
-  <object x="104" y="0" width="16" height="56"/>
-  <object x="96" y="0" width="8" height="32"/>
+  <object id="2" x="0" y="0" width="96" height="64"/>
+  <object id="3" x="104" y="0" width="16" height="56"/>
+  <object id="4" x="96" y="0" width="8" height="32"/>
  </objectgroup>
  <objectgroup name="Objects">
-  <object name="treasure1" x="24" y="72" width="8" height="8">
+  <object id="5" name="treasure1" x="24" y="72" width="8" height="8">
    <properties>
     <property name="collides" value="0"/>
     <property name="obstructs" value="0"/>
