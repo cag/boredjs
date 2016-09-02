@@ -1,3 +1,4 @@
+import 'babel-core/register'
 import 'babel-polyfill'
 import $ from 'jquery'
 import game from 'boredjs/game'
@@ -34,8 +35,6 @@ $(() => {
 
             demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.demo2player);
             let demo_scene2 = new demo2.DemoScene(loaded.maps.demo2);
-
-            // let zonko_desert = new demo2.DemoScene(loaded.maps.zonko_desert);
 
             game.switchScene(demo_scene2);
         });
