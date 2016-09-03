@@ -1,16 +1,7 @@
 import util from './util'
 
-// A prefix and suffix applied to names passed into sound
-// constructors so that they load from the right place.
-let url_prefix = 'assets/';
-let url_suffix = '.wav';
-
 // Thanks Boris Smus for the [Web Audio tutorial](http://www.html5rocks.com/en/tutorials/webaudio/intro/).
-(function() {
-    let w = window;
-    w.AudioContext = w.AudioContext || w.webkitAudioContext;
-    return;
-})();
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 let audio_context = null;
 
@@ -22,7 +13,6 @@ export default {
         } else {
             console.warn('could not initialize audio!');
         }
-        return;
     },
 
     // See the [Web Audio API](https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html)
@@ -39,24 +29,20 @@ export default {
             }
         
             let request = new XMLHttpRequest();
-            request.open('GET', url_prefix + this.name + url_suffix, true);
+            request.open('GET', this.name, true);
             request.responseType = 'arraybuffer';
         
-            let obj = this;
             request.onload = () =>
                 audio_context.decodeAudioData(request.response,
-                    (function(buffer) {
-                        obj.buffer = buffer;
+                    (buffer) => {
+                        this.buffer = buffer;
                         if (onload != null) { onload(); }
-                        return;
-                    }), function() {
-                        throw `could not load sound buffer from ${url}`;
-                        return;
+                    }, function() {
+                        throw Error(`could not load sound buffer from ${url}`);
                     })
             ;
         
             request.send();
-            return;
         }
     
         // Pass in a node to connect to if not playing this sound

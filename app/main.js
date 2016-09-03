@@ -17,13 +17,13 @@ $(() => {
     // This is where the game code starts.
     let loader_scene = new loader.LoaderScene({
             maps: {
-                demo: { name: 'demo', script: demo },
-                demo2: { name: 'demo2', script: demo2 },
+                demo: { file: 'assets/demo.json', script: demo },
+                demo2: { file: 'assets/demo2.json', script: demo2 },
                 // zonko_desert: { name: 'zonko_desert', script: zonko_desert}
             },
             sprites: {
-                player: 'player',
-                demo2player: 'demo2player',
+                player: 'assets/player.json',
+                demo2player: 'assets/demo2player.json',
                 // joanna: 'joanna',
                 // shaun: 'shaun',
                 // javelina: 'javelina'
@@ -36,10 +36,10 @@ $(() => {
             demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.demo2player);
             let demo_scene2 = new demo2.DemoScene(loaded.maps.demo2);
 
-            game.switchScene(demo_scene2);
+            game.switchScene(demo_scene);
         });
 
-    game.init(320, 240, 1 / 60, 1 / 20, loader_scene);
+    game.init(480, 240, 1 / 60, 1 / 20, loader_scene);
     // setupScreenfull(game);
     $(window).resize(game.resizeCanvasToAspectRatio);
     $(game.canvas()).attr('dir', ui.isRightToLeft() ? 'rtl' : 'ltr');

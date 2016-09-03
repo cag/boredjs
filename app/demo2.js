@@ -46,7 +46,6 @@ class Character extends entity.Entity {
 
     draw(context, offx, offy) {
         this.sprite.draw(context, this.x + offx, this.y + offy, this.facing_left);
-        return;
     }
 }
 
@@ -167,7 +166,6 @@ class PlayerCharacter extends Character {
         }
 
         sprite.update(dt);
-        return;
     }
 }
 
@@ -179,18 +177,15 @@ export default {
     setPlayerMetadata(shape, sprite) {
         player_shape = shape;
         player_sprite = sprite;
-        return;
     },
 
     handlePlayerStart(obj) {
         player = new PlayerCharacter(obj.x, obj.y, player_shape, player_sprite, obj.map.camera);
         player.obstructs = util.constructBitmask([0]);
         obj.layer.addEntity(player);
-        return;
     },
 
     handleChest1Start(obj) {
-        return;
     },
 
     tryOpeningChest1(obj) {
@@ -201,7 +196,6 @@ export default {
         td[0]++;
         layer.setTile(tx, ty, td);
         ui.textBoxDialog('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 0, 0, 160, 44, 10.0, null, null, () => game.state = 'world');
-        return;
     },
 
     DemoScene

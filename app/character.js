@@ -11,7 +11,6 @@ define(['./cg'],
 
         draw(context, offx, offy) {
             this.sprite.draw(context, this.x + offx, this.y + offy, this.facing_left);
-            return;
         }
     }
 
@@ -33,14 +32,12 @@ define(['./cg'],
                     }
                     ent.onActivate(ent);
                 }
-                return;
             };
             ent_layer.addEntity(this.activation_point_check);
             
             map.camera.post_update = function(dt) {
                 this.x = player.x;
                 this.y = player.y;
-                return;
             };
         }
 
@@ -52,7 +49,6 @@ define(['./cg'],
                     sprite.startAnimation(name);
                     state = name;
                 }
-                return;
             };
 
             if (game.state === 'world') {
@@ -112,7 +108,6 @@ define(['./cg'],
             }
 
             sprite.update(dt);
-            return;
         }
     };
 });

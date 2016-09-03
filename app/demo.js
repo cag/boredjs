@@ -17,14 +17,11 @@ export default {
             cam.shapeSubpath(context, targx - cam.x, targy - cam.y);
             context.fillStyle = '#A5DFEA';
             context.fill();
-            return;
         };
-        return;
     },
 
     setPlayerSprite(sprite) {
         player_sprite = sprite;
-        return;
     },
 
     handlePlayerStart(obj) {
@@ -95,7 +92,6 @@ export default {
                     sprite.startAnimation(name);
                     state = name;
                 }
-                return;
             };
         
             if (input.left.state && !input.right.state) {
@@ -199,7 +195,6 @@ export default {
         
             this.state = state;
             sprite.update(dt);
-            return;
         };
     
         player.onCollide = function(other, info) {
@@ -218,12 +213,10 @@ export default {
                     this.against_wall = true;
                 }
             }
-            return;
         };
     
         player.draw = function(context, offx, offy) {
             this.sprite.draw(context, this.x + offx, this.y + offy, this.facing_left);
-            return;
         };
     
         obj.layer.addEntity(player);
@@ -231,9 +224,6 @@ export default {
         obj.map.camera.post_update = function(dt) {
             this.x = player.x;
             this.y = player.y;
-            return;
         };
-    
-        return;
     }
 };

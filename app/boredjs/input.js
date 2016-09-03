@@ -15,7 +15,6 @@ export default {
         for (let button in this.buttons) {
             this[button] = {};
         }
-        return;
     },
 
     update() {
@@ -37,14 +36,11 @@ export default {
             }
         
             hash.last_state = hash.state;
-            return;
         };
     
         for (let button in this.buttons) {
             updateInputHash(this[button]);
-        }
-    
-        return;
+        }    
     },
 
     handleKeyDown(keyCode) {
@@ -54,7 +50,6 @@ export default {
                 this[button].state = true;
             }
         }
-        return;
     },
 
     handleKeyUp(keyCode) {
@@ -64,6 +59,5 @@ export default {
                 this[button].state = false;
             }
         }
-        return;
     }
 };

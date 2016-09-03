@@ -12,8 +12,6 @@ import util from './util'
 let numt;
 let cw;
 let ch;
-let url_prefix = 'assets/';
-let url_suffix = '.json';
 
 // If `layers_cached` is true, then tiles will be cached in blocks
 // of `layer_cache_factor` square and the blocks will be drawn
@@ -37,7 +35,7 @@ let byBottomBound = (ent_a, ent_b) =>
 // Refer to the [TMX Map Format](https://github.com/bjorn/tiled/wiki/TMX-Map-Format)
 // for information on how the map format works.
 class TileSet {
-    constructor(json_data, onload) {
+    constructor(json_data, folder, onload) {
         this.name = json_data.name;
         this.first_gid = json_data.firstgid;
         this.tile_width = json_data.tilewidth;
@@ -46,23 +44,25 @@ class TileSet {
         this.spacing = json_data.spacing;
         this.properties = json_data.properties;
         
-        let tileset = this;
+        let tileset = this, image_path = `${folder}/${json_data.image}`;
         this.image = new Image();
         this.image.onload = function() {
-            let iw = this.naturalWidth;
-            let ih = this.naturalHeight;
+            let iw = this.naturalWidth, ih = this.naturalHeight;
             if (iw !== json_data.imagewidth ||
                ih !== json_data.imageheight) {
                 throw `tileset ${tileset.name}` +
                     ' dimension mismatch (' +
                     iw + 'x' + ih + ' vs ' +
-                    this.naturalWidth + 'x' + this.naturalHeight + ')';
+                    json_data.imagewidth + 'x' + json_data.imageheight + ')';
             }
             
             tileset.setupTileMapping();
             if (onload != null) { return onload(); }
         };
-        this.image.src = url_prefix + json_data.image;
+        this.image.onerror = () => {
+            console.error(`could not load tileset image '${image_path}'`);
+        };
+        this.image.src = image_path;
     }
     
     setupTileMapping() {
@@ -229,7 +229,6 @@ class TileLayer extends Layer {
                 td[0], td[1], td[2], td[3],
                 bxo, byo);
         }
-        return;
     }
 
     drawRaw(context, lowtx, hightx, lowty, highty, dx, dy) {
@@ -246,7 +245,6 @@ class TileLayer extends Layer {
                     dy + (j - lowty) * th);
             }
         }
-        return;
     }
     
     draw(context, targx, targy) {
@@ -325,7 +323,7 @@ class ObjectLayer extends Layer {
         
         let {Point, Aabb, Polyline, Polygon} = geometry;
         let {Entity} = entity;
-        var {constructBitmask} = util;
+        let {constructBitmask} = util;
         
         super(json_data, map);
         
@@ -337,15 +335,16 @@ class ObjectLayer extends Layer {
         this.entities = [];
         let mapents = map.entities;
         
+        let l_collides, l_onCollide, l_obstructs, l_onObstruct;
         if (this.properties != null) {
-            var l_collides = tryMakingBitmaskFromString( 
+            l_collides = tryMakingBitmaskFromString(
                 this.properties.collides);
-            var l_onCollide = map.tryGettingCallbackForName( 
+            l_onCollide = map.tryGettingCallbackForName(
                 this.properties.onCollide);
             
-            var l_obstructs = tryMakingBitmaskFromString( 
+            l_obstructs = tryMakingBitmaskFromString(
                 this.properties.obstructs);
-            var l_onObstruct = map.tryGettingCallbackForName( 
+            l_onObstruct = map.tryGettingCallbackForName(
                 this.properties.onObstruct);
         }
         
@@ -382,18 +381,16 @@ class ObjectLayer extends Layer {
             
             if (object.properties != null) {
                 // Bitmasks from the object and layer are combined.
-                let obj_collides = tryMakingBitmaskFromString( 
+                let obj_collides = tryMakingBitmaskFromString(
                     object.properties.collides);
                 ent.collides = l_collides | obj_collides;
                 
-                let obj_obstructs = tryMakingBitmaskFromString( 
+                let obj_obstructs = tryMakingBitmaskFromString(
                     object.properties.obstructs);
                 ent.obstructs = l_obstructs | obj_obstructs;
                 
                 ent.properties = object.properties;
             }
-
-            return;
         };
         
         for (let j = 0; j < objects.length; j++) {
@@ -402,16 +399,17 @@ class ObjectLayer extends Layer {
             let objy = object.y;
             let objw = object.width;
             let objh = object.height;
+            let ent;
             
             if (object.polygon != null) {
-                var ent = new Entity(objx, objy,
+                ent = new Entity(objx, objy,
                     new Polygon(object.polygon.map(point => [point.x, point.y])));
             } else if (object.polyline != null) {
                 // Polylines are modeled as multiple polygons.
                 for (let i = 0; i < object.polyline.length - 1; i++) {
                     let point_a = object.polyline[i];
                     let point_b = object.polyline[i + 1];
-                    var ent = new Entity(objx, objy,
+                    ent = new Entity(objx, objy,
                         new Polygon([[point_a.x, point_a.y],
                             [point_b.x, point_b.y]]));
                     
@@ -420,11 +418,11 @@ class ObjectLayer extends Layer {
                 }
                 continue;
             } else if (objw === 0 && objh === 0) {
-                var ent = new Entity(objx, objy, new Point());
+                ent = new Entity(objx, objy, new Point());
             } else {
                 let objhwx = .5 * objw;
                 let objhwy = .5 * objh;
-                var ent = new Entity(objx + objhwx, objy + objhwy,
+                ent = new Entity(objx + objhwx, objy + objhwy,
                     new Aabb([objhwx, objhwy]));
             }
             
@@ -434,7 +432,6 @@ class ObjectLayer extends Layer {
         
         this.entities.sort(byBottomBound);
         if (this.properties != null) { this.onStart = map.tryGettingCallbackForName(this.properties.onStart); }
-        return;
     }
     
     addEntity(ent) {
@@ -457,7 +454,6 @@ class ObjectLayer extends Layer {
             let ent = ents[i];
             if (ent.draw != null) { ent.draw(context, xoff, yoff); }
         }
-        return;
     }
     
     debugDraw(context, targx, targy) {
@@ -488,7 +484,6 @@ class ObjectLayer extends Layer {
         context.stroke();
         
         context.restore();
-        return;
     }
 }
 
@@ -496,21 +491,22 @@ class ObjectLayer extends Layer {
 // searched for inside of the `@script` passed.
 export default {
     Map: class {
-        constructor(name, script, onload) {
-            this.name = name;
+        constructor(file, script, onload) {
+            this.file = file;
+            this.folder = file.substr(0, file.lastIndexOf('/'));
             this.script = script;
             this.loaded = false;
             this.entities = [];
-            $.getJSON(url_prefix + this.name + url_suffix,
-                (data) => { this.load(data, onload); }).fail((jqxhr, textStatus, error) => {
-                    console.error(`Error loading map ${name}: ${error}`);
-                });
-            return;
+            $.getJSON(this.file, (data) => {
+                this.load(data, onload);
+            }).fail((jqxhr, textStatus, error) => {
+                console.error(`Error loading map ${file}: ${error}`);
+            });
         }
     
         load(json_data, onload) {
             if (json_data.orientation !== 'orthogonal') {
-                throw `orientation ${orientation} not supported`;
+                throw Error(`orientation ${orientation} not supported`);
             }
         
             this.width = json_data.width;
@@ -545,13 +541,11 @@ export default {
                     map.loaded = true;
                     if (onload != null) { onload(); }
                 }
-                return;
             };
         
-            this.tilesets = tilesets.map(ts => new TileSet(ts, ts_load_cb));
+            this.tilesets = tilesets.map(ts => new TileSet(ts, this.folder, ts_load_cb));
         
             this.entities.sort(byLeftBound);
-            return;
         }
     
         tryGettingCallbackForName(name) {
@@ -560,7 +554,7 @@ export default {
                 if (callback != null) {
                     return callback;
                 } else {
-                    throw `missing callback ${name}!`;
+                    throw Error(`missing callback ${name}!`);
                 }
             }
             return null;
@@ -573,7 +567,6 @@ export default {
                     layer.buildCache();
                 }
             }
-            return;
         }
     
         drawTile(context, gid, flip_h, flip_v, flip_d, x, y) {
@@ -585,7 +578,6 @@ export default {
                     break;
                 }
             }
-            return;
         }
     
         doCollisions() {
@@ -605,8 +597,6 @@ export default {
                     this.doCollision(enti, this.entities[k]);
                 }
             }
-        
-            return;
         }
     
         doCollision(ent_a, ent_b) {
@@ -653,7 +643,6 @@ export default {
                     if (ent_b.onObstruct != null) { ent_b.onObstruct(ent_a, neg_collision_info); }
                 }
             }
-            return;
         }
 
         // Gets a layer by name. Returns null if the layer is not found.
@@ -674,7 +663,6 @@ export default {
                 let ent = this.entities[j];
                 if (ent.onStart != null) { ent.onStart(ent); }
             }
-            return;
         }
     
         update(dt) {
@@ -684,7 +672,6 @@ export default {
             }
             this.doCollisions();
             if (this.camera.post_update != null) { this.camera.post_update(dt); }
-            return;
         }
     
         draw(context, targx, targy) {
@@ -692,7 +679,6 @@ export default {
                 let layer = this.layers[i];
                 layer.draw(context, targx, targy);
             }
-            return;
         }
     
         debugDraw(context, targx, targy) {
@@ -723,11 +709,12 @@ export default {
     MapScene: class {
         constructor(map) {
             this.map = map;
-            return;
         }
     
         start() {
-            if (!this.map.loaded) { throw `${this.map.name} not loaded!`; }
+            if (!this.map.loaded) {
+                throw Error(`${this.map.name} not loaded!`);
+            }
             let {Entity} = entity;
             let {Aabb} = geometry;
         
@@ -738,29 +725,25 @@ export default {
             this.map.entities.push(this.map.camera);
         
             this.map.start();
-            return;
         }
     
         end() {}
     
         update(dt) {
             this.map.update(dt);
-            return;
         }
     
         draw(context) {
-            let gw = game.width();
-            let gh = game.height();
-            let hgw = .5 * gw;
-            let hgh = .5 * gh;
+            let gw = game.width(),
+                gh = game.height(),
+                hgw = .5 * gw,
+                hgh = .5 * gh;
         
             context.clearRect(0, 0, gw, gh);
             context.beginPath();
         
             this.map.draw(context, hgw, hgh);
             if (input.debug.state) { this.map.debugDraw(context, hgw, hgh); }
-        
-            return;
         }
     }
 };

@@ -191,14 +191,15 @@ let testAabbAabbIntersection = function(a1, a1x, a1y, a2, a2x, a2y) {
 let testAabbPolygonIntersection = function(a, ax, ay, p, px, py) {
     let intersects = intervalsIntersect([
         ax + a.bounds_offsets[0], ax + a.bounds_offsets[1]], [
-        px + p.bounds_offsets[0], px + p.bounds_offsets[1]]);
+        px + p.bounds_offsets[0], px + p.bounds_offsets[1]]),
+        pen_amt, pen_dir;
     
     if (intersects < 0) {
-        var pen_amt = -intersects;
-        var pen_dir = [-1, 0];
+        pen_amt = -intersects;
+        pen_dir = [-1, 0];
     } else {
-        var pen_amt = intersects;
-        var pen_dir = [1, 0];
+        pen_amt = intersects;
+        pen_dir = [1, 0];
     }
     
     intersects = intervalsIntersect([
@@ -206,11 +207,11 @@ let testAabbPolygonIntersection = function(a, ax, ay, p, px, py) {
         py + p.bounds_offsets[2], py + p.bounds_offsets[3]]);
     
     if (intersects < 0) {
-        var pen_amt = -intersects;
-        var pen_dir = [0, -1];
+        pen_amt = -intersects;
+        pen_dir = [0, -1];
     } else {
-        var pen_amt = intersects;
-        var pen_dir = [0, 1];
+        pen_amt = intersects;
+        pen_dir = [0, 1];
     }
     
     return calcShapePolygonMinimumPenetrationVector( 
@@ -222,10 +223,11 @@ let testAabbPolygonIntersection = function(a, ax, ay, p, px, py) {
 let testPolygonPolygonIntersection = function(p1, p1x, p1y, p2, p2x, p2y) {
     let ret = calcShapePolygonMinimumPenetrationVector( 
         p1, p1x, p1y,
-        p2, p2x, p2y);
+        p2, p2x, p2y),
+        pen_amt, pen_dir;
     
     if (ret) {
-        var [pen_amt, pen_dir] = ret;
+        [pen_amt, pen_dir] = ret;
     } else {
         return false;
     }
@@ -265,7 +267,6 @@ export default {
         subpath(context, offx, offy) {
             context.moveTo(offx + POINT_RADIUS, offy);
             context.arc(offx, offy, POINT_RADIUS, 0, 2 * Math.PI);
-            return;
         }
     },
 
@@ -276,14 +277,12 @@ export default {
             this.type = 'Aabb';
             let hw = this.halfwidth;
             this.bounds_offsets = [-hw[0], hw[0], -hw[1], hw[1]];
-            return;
         }
     
         subpath(context, offx, offy) {
             let hw = this.halfwidth;
             context.rect(offx - hw[0], offy - hw[1],
                 2 * hw[0], 2 * hw[1]);
-            return;
         }
     },
 
@@ -306,7 +305,7 @@ export default {
             let ccw = null;
             let ptslen = points.length;
             for (let i = 0; i < ptslen; i++) {
-                var j = (i + 1) % ptslen;
+                let j = (i + 1) % ptslen;
                 let k = (i + 2) % ptslen;
                 let edge1 = [points[j][0] - points[i][0],
                     points[j][1] - points[i][1]];
@@ -332,7 +331,7 @@ export default {
             let normals = [];
             let bounds_on_normals = [];
             for (let i = 0; i < ptslen; i++) {
-                var j = (i + 1) % ptslen;
+                let j = (i + 1) % ptslen;
                 let normal = normalize([this.points[i][1] - this.points[j][1],
                     this.points[j][0] - this.points[i][0]]);
             
@@ -355,8 +354,6 @@ export default {
         
             this.normals = normals;
             this.bounds_on_normals = bounds_on_normals;
-        
-            return;
         }
     
         subpath(context, offx, offy) {
@@ -367,8 +364,8 @@ export default {
             }
             context.closePath();
         
-            let coffx = offx + this.center_offset[0];
-            let coffy = offy + this.center_offset[1];
+            let coffx = offx + this.center_offset[0],
+                coffy = offy + this.center_offset[1];
             context.moveTo(coffx + POINT_RADIUS, coffy);
             context.arc(coffx, coffy, POINT_RADIUS, 0, 2 * Math.PI);
         
@@ -380,8 +377,6 @@ export default {
                     (NORMAL_LENGTH + NORMAL_OFFSET) * normal[0],
                     coffy + (NORMAL_LENGTH + NORMAL_OFFSET) * normal[1]);
             }
-        
-            return;
         }
     },
 

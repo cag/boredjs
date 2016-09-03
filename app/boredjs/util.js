@@ -10,7 +10,6 @@ let insertionSort = function(ary, cmp) {
         }
         ary[j] = tmp;
     }
-    return;
 };
 
 // requestAnimationFrame shim by Erik Möller
@@ -55,8 +54,6 @@ let insertionSort = function(ary, cmp) {
 
         w.cancelAnimationFrame = id => clearTimeout(id);
     }
-    
-    return;
 })();
 
 // Performance.now polyfill.

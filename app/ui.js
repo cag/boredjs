@@ -81,7 +81,6 @@ let drawTextBox = function(x, y, width, height, lines_scrolled, text_obj, style,
     }
 
     context.restore();
-    return;
 };
 
 export default {
@@ -91,20 +90,22 @@ export default {
         game.state = 'dialog';
         style = style || default_style;
         context = context || game.canvas().getContext('2d');
-        let line_progress = 0.0;
-        let lines_scrolled = 0.0;
-        let num_lines_per_screen = ((height - 6.0) / style.fontSize) | 0;
-        let cur_line_idx = 0;
-        let cur_line = '';
-        let word_wrapped_text = wordWrapText(text, width-6, style, context);
-        let displayed_text = [];
-        let done = false;
+        let line_progress = 0.0,
+            lines_scrolled = 0.0,
+            num_lines_per_screen = ((height - 6.0) / style.fontSize) | 0,
+            cur_line_idx = 0,
+            cur_line = '',
+            word_wrapped_text = wordWrapText(text, width-6, style, context),
+            displayed_text = [],
+            done = false,
+            new_line_progress;
+
         let updateGenerator = function*() {
             while (cur_line_idx < word_wrapped_text.length) {
-                var dt = yield undefined;
-                let delta = dt * speed * (input.jump.state ? 3.0 : 1.0);
+                let dt = yield undefined,
+                    delta = dt * speed * (input.jump.state ? 3.0 : 1.0);
                 if (lines_scrolled >= cur_line_idx - num_lines_per_screen + 1) {
-                    var new_line_progress = line_progress + delta;
+                    new_line_progress = line_progress + delta;
                 } else {
                     lines_scrolled = Math.min(cur_line_idx - num_lines_per_screen + 1, lines_scrolled + delta);
                 }
@@ -113,7 +114,7 @@ export default {
                         cur_line_idx++;
                         cur_line = '';
                         line_progress = 0.0;
-                        var new_line_progress = 0.0;
+                        new_line_progress = 0.0;
                         displayed_text = word_wrapped_text.slice(0, cur_line_idx);
                     } else {
                         cur_line = word_wrapped_text[cur_line_idx].slice(0, (new_line_progress | 0)).trim();
@@ -123,18 +124,19 @@ export default {
                 }
                 line_progress = new_line_progress;
             }
-                // if input.debug.pressed
-                //     console.log {
-                //         num_lines_per_screen: num_lines_per_screen
-                //         line_progress: line_progress
-                //         lines_scrolled: lines_scrolled
-                //         cur_line_idx: cur_line_idx
-                //         cur_line: cur_line
-                //         word_wrapped_text: word_wrapped_text
-                //         displayed_text: displayed_text
-                //     }
+            // if(input.debug.pressed) {
+            //     console.log({
+            //         num_lines_per_screen: num_lines_per_screen,
+            //         line_progress: line_progress,
+            //         lines_scrolled: lines_scrolled,
+            //         cur_line_idx: cur_line_idx,
+            //         cur_line: cur_line,
+            //         word_wrapped_text: word_wrapped_text,
+            //         displayed_text: displayed_text
+            //     });
+            // }
             displayed_text = word_wrapped_text;
-            while (!input.jump.pressed) { var dt = yield undefined; }
+            while (!input.jump.pressed) { let dt = yield undefined; }
             done = true;
             if (callback != null) { return callback(); }
         };

@@ -29,12 +29,10 @@ let draw_coroutines = [];
 // Callbacks for keys are delegated to the input module.
 let handleKeyDown = function(event) {
     input.handleKeyDown(event.keyCode);
-    return;
 };
 
 let handleKeyUp = function(event) {
     input.handleKeyUp(event.keyCode);
-    return;
 };
 
 // Advances the execution state of a set of coroutines with a parameter
@@ -46,7 +44,6 @@ let advanceCoroutines = function(coroutines, arg) {
             coroutines.splice(i, 1);
         }
     }
-    return;
 };
 
 // Update call.
@@ -54,7 +51,6 @@ let update = function(dt) {
     input.update();
     current_scene.update(dt);
     advanceCoroutines(update_coroutines, dt);
-    return;
 };
 
 // Draw call.
@@ -70,7 +66,6 @@ let draw = function() {
     advanceCoroutines(draw_coroutines, context);
 
     context.restore();
-    return;
 };
 
 // Canvas resizing callback
@@ -86,7 +81,6 @@ let resizeCanvasToAspectRatio = function() {
         game_x_offset = 0;
         game_y_offset = (0.5 * (canvas.height - game_h)) | 0;
     }
-    return;
 };
 export default {
     resizeCanvasToAspectRatio,
@@ -110,7 +104,6 @@ export default {
         current_scene.end();
         current_scene = new_scene;
         current_scene.start();
-        return;
     },
 
     // Initialize the game with the specified parameters. Pass in null
@@ -150,7 +143,6 @@ export default {
         document.body.addEventListener('keyup', handleKeyUp, false);
     
         audio.init();
-        return;
     },
 
     // Runs the game loop, starting the scene and calling update and
@@ -186,7 +178,6 @@ export default {
     
         current_scene.start();
         gameLoop();
-        return;
     },
 
     // Pushes a coroutine set onto the invocation stack.

@@ -1,23 +1,23 @@
 import $ from 'jquery'
 
 // Similar to the map module, sprites are loaded via JSON from
-// a url constructed from @name.
-let url_prefix = 'assets/';
-let url_suffix = '.json';
+// a url constructed from @file.
 
 export default {
     Sprite: class {
-        constructor(name, onload) {
-            this.name = name;
+        constructor(file, onload) {
+            this.file = file;
+            this.name = file.substr(file.lastIndexOf('/') + 1, file.length);
+            this.folder = file.substr(0, file.lastIndexOf('/'));
             this.loaded = false;
-            $.getJSON(url_prefix + this.name + url_suffix, (data) => {
+            $.getJSON(this.file, (data) => {
                 try {
                     this.load(data, onload);
                 } catch (err) {
-                    throw `could not load sprite ${name}: ${err}`;
+                    throw `could not load sprite ${file}: ${err}`;
                 }
             }).fail((jqxhr, textStatus, err) => {
-                console.error(`error loading sprite ${name}: ${err}`);
+                console.error(`error loading sprite ${file}: ${err}`);
             });
         }
     
@@ -58,8 +58,7 @@ export default {
             let {offset, frames, animations} = json_data;
         
             for (let name in animations) {
-                let animation = animations[name];
-                let duration = 0;
+                let animation = animations[name], duration = 0;
                 for (let i = 0; i < animation.frames.length; i++) {
                     let frame = animation.frames[i];
                     duration += frame[1];
@@ -68,17 +67,17 @@ export default {
             }
         
             this.animations = animations;
-            let sprite = this;
         
-            let image = new Image();
-            image.onload = function() {
-                sprite.setupFrames(image, offset, frames);
+            let image = new Image(), image_path = `${this.folder}/${json_data.spritesheet}`;
+            image.onload = () => {
+                this.setupFrames(image, offset, frames);
                 this.loaded = true;
                 if (onload != null) { onload(); }
-                return;
             };
-            image.src = url_prefix + json_data.spritesheet;
-            return;
+            image.onerror = () => {
+                console.error(`could not be load spritesheet '${image_path}'`);
+            };
+            image.src = image_path;
         }
     
         setupFrames(img, offset, frames) {
@@ -99,7 +98,6 @@ export default {
         
             this.frames = frames.map(grabFrame);
             this.frame_offsets = frames.map(frame => frame.offset);
-            return;
         }
     
         startAnimation(anim_name, anim_speed = 1) {
@@ -114,7 +112,6 @@ export default {
     
         update(dt) {
             this.animation_time += dt * this.animation_speed;
-            return;
         }
     
         draw(context, x, y, flip_h) {
@@ -122,6 +119,7 @@ export default {
             let cur_anim_dur = cur_anim.duration;
             let frame_index = -1;
             let anim_time = this.animation_time;
+            let frame_hflipped;
         
             if (cur_anim.loop) {
                 anim_time %= cur_anim_dur;
@@ -134,7 +132,7 @@ export default {
                 anim_time -= frame[1];
                 if (anim_time <= 0) {
                     frame_index = frame[0];
-                    var frame_hflipped = !!frame[2];
+                    frame_hflipped = !!frame[2];
                     break;
                 }
             }
@@ -149,8 +147,6 @@ export default {
             context.drawImage(frame_img, frame_offset[0], frame_offset[1]);
         
             context.restore();
-        
-            return;
         }
     }
 };

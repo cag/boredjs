@@ -53,7 +53,6 @@ export default {
             if (resource_count <= 0) {
                 throw `invalid resource count (${resource_count})`;
             }
-            return;
         }
     
         start() {
@@ -74,7 +73,6 @@ export default {
                     loader.finished = true;
                     if (loader.onload != null) { loader.onload(loader.loaded); }
                 }
-                return;
             };
         
             for (let type in this.resources) {
@@ -82,38 +80,31 @@ export default {
                 let target = this.loaded[type];
             
                 if (type === 'maps') {
-                    for (var key in obj) {
-                        var res = obj[key];
-                        target[key] = new Map(res.name, res.script,
+                    for (let key in obj) {
+                        let res = obj[key];
+                        target[key] = new Map(res.file, res.script,
                             callback);
                     }
                 } else if (type === 'sprites') {
-                    for (var key in obj) {
-                        var res = obj[key];
+                    for (let key in obj) {
+                        let res = obj[key];
                         target[key] = new Sprite(res, callback);
                     }
                 } else if (type === 'sounds') {
-                    for (var key in obj) {
-                        var res = obj[key];
+                    for (let key in obj) {
+                        let res = obj[key];
                         target[key] = new Sound(res, callback);
                     }
                 } else {
                     throw `attempting to load unknown type ${type}`;
                 }
             }
-            return;
         }
     
-        end() {
-            return;
-        }
+        end() {}
     
-        update(dt) {
-            return;
-        }
+        update(dt) {}
     
-        draw(context) {
-            return;
-        }
+        draw(context) {}
     }
 };

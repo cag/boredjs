@@ -14,7 +14,6 @@ export default {
         // the drawing context.
         shapeSubpath(context, xoff, yoff) {
             this.shape.subpath(context, this.x + xoff, this.y + yoff);
-            return;
         }
     
         // Detects if entity bounds are left of another's bounds.

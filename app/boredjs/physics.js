@@ -19,6 +19,5 @@ export default {
         v[1] = v[1] + a[1] * dt;
     
         obj.velocity = v;
-        return;
     }
 };
