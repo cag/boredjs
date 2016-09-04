@@ -1,10 +1,14 @@
 import $ from 'jquery'
+import screenfull from 'screenfull'
+
 import util from './util'
 import input from './input'
 import audio from './audio'
 
 let canvas = null,
     context = null,
+    canvas_top_offset = 0,
+    canvas_left_offset = 0,
     game_w = 0,
     game_h = 0,
     game_x_offset = 0,
@@ -72,9 +76,11 @@ let draw = function() {
 
 // Canvas resizing callback
 let resizeCanvasToAspectRatio = function() {
+    // First set these so that canvas will attempt to be at the right size
     canvas.width = game_w;
     canvas.height = game_h;
 
+    // Expand canvas draw dimensions to fill actual dimensions
     if (game_w / game_h < canvas.clientWidth / canvas.clientHeight) {
         game_coord_scale = game_h / canvas.clientHeight;
         canvas.width = game_h * canvas.clientWidth / canvas.clientHeight;
@@ -87,6 +93,17 @@ let resizeCanvasToAspectRatio = function() {
         canvas.height = game_w * canvas.clientHeight / canvas.clientWidth;
         game_x_offset = 0;
         game_y_offset = (0.5 * (canvas.height - game_h)) | 0;
+    }
+
+    let elem = canvas, offsets = [];
+    canvas_left_offset = 0;
+    canvas_top_offset = 0;
+
+    while(elem && !isNaN(elem.offsetLeft) && !isNaN(elem.offsetTop)) {
+        offsets.push([elem.offsetLeft, elem.offsetTop]);
+        canvas_left_offset += elem.offsetLeft;
+        canvas_top_offset += elem.offsetTop;
+        elem = elem.offsetParent;
     }
 };
 
@@ -147,15 +164,34 @@ export default {
     
         window.addEventListener('keydown', handleKeyDown, false);
         window.addEventListener('keyup', handleKeyUp, false);
-        window.addEventListener('click', function(event) {
-            if(event.target == canvas) {
-                let offsetX = event.offsetX || event.touches[0].offsetX,
-                    offsetY = event.offsetY || event.touches[0].offsetY,
-                    gameX = offsetX * game_coord_scale - game_x_offset,
-                    gameY = offsetY * game_coord_scale - game_y_offset;
-                console.log(gameX, gameY);
+        $(canvas).on('touchstart mousedown', function(event) {
+            let offsetX = event.offsetX,
+                offsetY = event.offsetY;
+
+            if(offsetX == null || offsetY == null) {
+                let pageX = event.pageX,
+                    pageY = event.pageY;
+
+                if(pageX == null) pageX = event.touches[0].pageX;
+                if(pageY == null) pageY = event.touches[0].pageY;
+
+                offsetX = pageX - canvas_left_offset;
+                offsetY = pageY - canvas_top_offset;
             }
-        }, false);
+
+            console.log([
+                offsetX * game_coord_scale - game_x_offset,
+                offsetY * game_coord_scale - game_y_offset
+            ]);
+            // if(event.target == canvas) {
+            //     let offsetX = event.offsetX || event.touches[0].offsetX,
+            //         offsetY = event.offsetY || event.touches[0].offsetY,
+            //         gameX = offsetX * game_coord_scale - game_x_offset,
+            //         gameY = offsetY * game_coord_scale - game_y_offset;
+            //     console.log(gameX, gameY);
+            // }
+            event.preventDefault();
+        });
     
         audio.init();
     },

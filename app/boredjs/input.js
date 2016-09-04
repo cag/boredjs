@@ -40,7 +40,7 @@ export default {
     
         for (let button in this.buttons) {
             updateInputHash(this[button]);
-        }    
+        }
     },
 
     handleKeyDown(keyCode) {

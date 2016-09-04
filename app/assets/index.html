@@ -4,11 +4,15 @@
     <title>Test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
-<div><canvas id="game"></canvas></div>
+<div>
+    <canvas id="game" class="pixelated" style="cursor:none;max-width:100%"></canvas>
+</div>
 <button class="fullscreen-toggle">Fullscreen</button>
-<div id="console" style="overflow:scroll;height:200px;"></div>
+<div id="console" style="overflow:scroll;height:100px;">
+</div>
 <script>
 // Approach based on following blog post:
 // http://tobyho.com/2012/07/27/taking-over-console-log/
