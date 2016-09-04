@@ -1,12 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Test</title>
+    <title>Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 <body>
+<div><canvas id="game"></canvas></div>
+<button class="fullscreen-toggle">Fullscreen</button>
+<div id="console" style="overflow:scroll;height:200px;"></div>
+<script>
+// Approach based on following blog post:
+// http://tobyho.com/2012/07/27/taking-over-console-log/
+(function takeOverConsole() {
+    var console = window.console,
+        container = document.getElementById('console');
+
+    if (!console || !container) return;
+
+    function intercept(method) {
+        var original = console[method];
+        console[method] = function() {
+            var strMessage = Array.prototype.slice.apply(arguments).join(' '),
+                newMessageElem = document.createElement("div");
+
+            newMessageElem.appendChild(document.createTextNode(strMessage));
+            container.appendChild(newMessageElem);
+            container.scrollTop = container.scrollHeight;
+
+            if (original.apply) {
+                // Do this for normal browsers
+                original.apply(console, arguments);
+            } else {
+                // Do this for IE
+                original(strMessage);
+            }
+        }
+    }
+
+    var methods = ['log', 'warn', 'error'];
+    for(var i = 0; i < methods.length; i++)
+        intercept(methods[i]);
+})();
+</script>
 <script src="/vendor.js"></script>
 <script src="/bored.js"></script>
 <script src="/app.js"></script>
-<script>require('main');</script>
+<script>
+try {
+    require('main');
+} catch(e) {
+    console.error(e);
+    throw e;
+}
+</script>
 </body>
 </html>

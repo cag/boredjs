@@ -1,13 +1,15 @@
+import $ from 'jquery'
 import util from './util'
 import input from './input'
 import audio from './audio'
 
-let canvas = null;
-let context = null;
-let game_w = 0;
-let game_h = 0;
-let game_x_offset = 0;
-let game_y_offset = 0;
+let canvas = null,
+    context = null,
+    game_w = 0,
+    game_h = 0,
+    game_x_offset = 0,
+    game_y_offset = 0,
+    game_coord_scale = 0;
 
 let current_scene = null;
 
@@ -19,12 +21,12 @@ let fixed_dt = null;
 
 // A clamp is placed on delta time so tunneling may be avoided with
 // some careful planning by the developer.
-let dt_clamp = 50;
-let paused = true;
+let dt_clamp = 50,
+    paused = true;
 
 // Lists of coroutines for executing coroutines
-let update_coroutines = [];
-let draw_coroutines = [];
+let update_coroutines = [],
+    draw_coroutines = [];
 
 // Callbacks for keys are delegated to the input module.
 let handleKeyDown = function(event) {
@@ -70,18 +72,24 @@ let draw = function() {
 
 // Canvas resizing callback
 let resizeCanvasToAspectRatio = function() {
+    canvas.width = game_w;
+    canvas.height = game_h;
+
     if (game_w / game_h < canvas.clientWidth / canvas.clientHeight) {
+        game_coord_scale = game_h / canvas.clientHeight;
         canvas.width = game_h * canvas.clientWidth / canvas.clientHeight;
         canvas.height = game_h;
         game_x_offset = (0.5 * (canvas.width - game_w)) | 0;
         game_y_offset = 0;
     } else {
+        game_coord_scale = game_w / canvas.clientWidth;
         canvas.width = game_w;
         canvas.height = game_w * canvas.clientHeight / canvas.clientWidth;
         game_x_offset = 0;
         game_y_offset = (0.5 * (canvas.height - game_h)) | 0;
     }
 };
+
 export default {
     resizeCanvasToAspectRatio,
 
@@ -122,14 +130,12 @@ export default {
         } else {
             last_dt = 1 / 60;
         }
-    
-        let container = (document.getElementById('game')) || document.body;
-        canvas = document.createElement('canvas');
-    
+
+        canvas = document.getElementById('game');
+
         game_w = width;
         game_h = height;
 
-        container.appendChild(canvas);
         resizeCanvasToAspectRatio();
     
         context = canvas.getContext('2d');
@@ -139,8 +145,17 @@ export default {
     
         input.init();
     
-        document.body.addEventListener('keydown', handleKeyDown, false);
-        document.body.addEventListener('keyup', handleKeyUp, false);
+        window.addEventListener('keydown', handleKeyDown, false);
+        window.addEventListener('keyup', handleKeyUp, false);
+        window.addEventListener('click', function(event) {
+            if(event.target == canvas) {
+                let offsetX = event.offsetX || event.touches[0].offsetX,
+                    offsetY = event.offsetY || event.touches[0].offsetY,
+                    gameX = offsetX * game_coord_scale - game_x_offset,
+                    gameY = offsetY * game_coord_scale - game_y_offset;
+                console.log(gameX, gameY);
+            }
+        }, false);
     
         audio.init();
     },

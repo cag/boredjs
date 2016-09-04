@@ -1,6 +1,8 @@
 import 'babel-core/register'
 import 'babel-polyfill'
 import $ from 'jquery'
+import screenfull from 'screenfull'
+
 import game from 'boredjs/game'
 import loader from 'boredjs/loader'
 import map from 'boredjs/map'
@@ -9,6 +11,15 @@ import demo from './demo'
 import demo2 from './demo2'
 import ui from 'ui'
 import zonko_desert from 'zonko_desert'
+
+function setupFullscreen() {
+    $('.fullscreen-toggle').click(() => {
+        if(screenfull.enabled) {
+            screenfull.request(document.getElementById('game'));
+        }
+    });
+}
+
 
 $(() => {
     // Force jQuery to grab fresh data in its Ajax requests.
@@ -39,8 +50,8 @@ $(() => {
             game.switchScene(demo_scene);
         });
 
-    game.init(480, 240, 1 / 60, 1 / 20, loader_scene);
-    // setupScreenfull(game);
+    game.init(480, 120, 1 / 60, 1 / 20, loader_scene);
+    setupFullscreen();
     $(window).resize(game.resizeCanvasToAspectRatio);
     $(game.canvas()).attr('dir', ui.isRightToLeft() ? 'rtl' : 'ltr');
     game.run();

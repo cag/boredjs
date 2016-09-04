@@ -1,8 +1,7 @@
 import util from './util'
 
 // Thanks Boris Smus for the [Web Audio tutorial](http://www.html5rocks.com/en/tutorials/webaudio/intro/).
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
-
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
 let audio_context = null;
 
 // Initializes the audio system.
@@ -13,6 +12,7 @@ export default {
         } else {
             console.warn('could not initialize audio!');
         }
+        console.log(audio_context);
     },
 
     // See the [Web Audio API](https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html)
