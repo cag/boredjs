@@ -41,6 +41,53 @@ let handleKeyUp = function(event) {
     input.handleKeyUp(event.keyCode);
 };
 
+let getGameSpaceCoordinatesFromEvent = function(event) {
+    let offsetX = event.offsetX,
+        offsetY = event.offsetY;
+
+    if(offsetX == null || offsetY == null) {
+        let pageX = event.pageX,
+            pageY = event.pageY;
+
+        if(pageX == null || pageY == null) {
+            pageX = event.touches[0].pageX;
+            pageY = event.touches[0].pageY;
+        }
+
+        if(pageX == null || pageY == null) {
+            console.error('could not get pageX or pageY from event!');
+            console.error(event);
+        }
+        offsetX = pageX - canvas_left_offset;
+        offsetY = pageY - canvas_top_offset;
+    }
+
+    return [
+        offsetX * game_coord_scale - game_x_offset,
+        offsetY * game_coord_scale - game_y_offset
+    ];
+
+};
+
+// Callbacks for the pointer are also delegated to the input module after processing
+let handlePointerDown = function(event) {
+    let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
+    input.handlePointerDown(gameX, gameY);
+    event.preventDefault();
+};
+
+let handlePointerUp = function(event) {
+    let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
+    input.handlePointerUp(gameX, gameY);
+    event.preventDefault();
+};
+
+let handlePointerMove = function(event) {
+    let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
+    input.handlePointerUp(gameX, gameY);
+    event.preventDefault();
+};
+
 // Advances the execution state of a set of coroutines with a parameter
 let advanceCoroutines = function(coroutines, arg) {
     for (let i = coroutines.length-1; i >= 0; i--) {
@@ -164,34 +211,8 @@ export default {
     
         window.addEventListener('keydown', handleKeyDown, false);
         window.addEventListener('keyup', handleKeyUp, false);
-        $(canvas).on('touchstart mousedown', function(event) {
-            let offsetX = event.offsetX,
-                offsetY = event.offsetY;
-
-            if(offsetX == null || offsetY == null) {
-                let pageX = event.pageX,
-                    pageY = event.pageY;
-
-                if(pageX == null) pageX = event.touches[0].pageX;
-                if(pageY == null) pageY = event.touches[0].pageY;
-
-                offsetX = pageX - canvas_left_offset;
-                offsetY = pageY - canvas_top_offset;
-            }
-
-            console.log([
-                offsetX * game_coord_scale - game_x_offset,
-                offsetY * game_coord_scale - game_y_offset
-            ]);
-            // if(event.target == canvas) {
-            //     let offsetX = event.offsetX || event.touches[0].offsetX,
-            //         offsetY = event.offsetY || event.touches[0].offsetY,
-            //         gameX = offsetX * game_coord_scale - game_x_offset,
-            //         gameY = offsetY * game_coord_scale - game_y_offset;
-            //     console.log(gameX, gameY);
-            // }
-            event.preventDefault();
-        });
+        $(canvas).on('touchstart mousedown', handlePointerDown);
+        $(canvas).on('touchend mouseup', handlePointerUp);
     
         audio.init();
     },
@@ -199,7 +220,7 @@ export default {
     // Runs the game loop, starting the scene and calling update and
     // draw when appropriate.
     run() {
-        if (current_scene == null) { throw 'no current scene!'; }
+        if (current_scene == null) { throw Error('no current scene!'); }
     
         let {requestAnimationFrame} = window;
         let {time} = util;

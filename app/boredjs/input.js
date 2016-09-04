@@ -34,7 +34,6 @@ export default {
                     hash.released = false;
                 }
             }
-        
             hash.last_state = hash.state;
         };
     
@@ -59,5 +58,17 @@ export default {
                 this[button].state = false;
             }
         }
+    },
+
+    handlePointerDown(x, y) {
+        console.log('pointerdown:', x, y);
+    },
+
+    handlePointerUp(x, y) {
+        console.log('pointerup:', x, y);
+    },
+
+    handlePointerMove(x, y) {
+        console.log('pointermove:', x, y);
     }
 };

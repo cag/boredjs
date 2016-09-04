@@ -78,8 +78,7 @@ class PlayerCharacter extends Character {
     }
 
     update(dt) {
-        let { sprite } = this;
-        let { state } = this;
+        let { sprite, state } = this;
         let switchStateTo = function(name) {
             if (state !== name) {
                 sprite.startAnimation(name);
@@ -172,8 +171,18 @@ class PlayerCharacter extends Character {
 let player = null;
 let player_shape = null;
 let player_sprite = null;
-
+const RADIUS = 1;
 export default {
+    setupOverlay(layer) {
+        layer.draw = function(context, targx, targy) {
+            context.beginPath();
+            context.moveTo(targx + RADIUS, targy);
+            context.arc(targx, targy, RADIUS, 0, 2 * Math.PI);
+            context.fillStyle = '#ff0000';
+            context.fill();
+        };
+    },
+
     setPlayerMetadata(shape, sprite) {
         player_shape = shape;
         player_sprite = sprite;
@@ -195,7 +204,12 @@ export default {
         let td = layer.data[tx][ty].slice();
         td[0]++;
         layer.setTile(tx, ty, td);
-        ui.textBoxDialog('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 0, 0, 160, 44, 10.0, null, null, () => game.state = 'world');
+        ui.textBoxDialog('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', {
+            // width: 160,
+            // height: 44,
+            // speed: 10.0,
+            callback: () => game.state = 'world'
+        });
     },
 
     DemoScene

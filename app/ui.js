@@ -86,7 +86,14 @@ let drawTextBox = function(x, y, width, height, lines_scrolled, text_obj, style,
 export default {
     isRightToLeft() { return right_to_left; },
 
-    textBoxDialog(text, x, y, width, height, speed, style, context, callback) {
+    textBoxDialog(text, conf) {
+        let {x, y, width, height, speed, style, context, callback} = conf;
+        if(x == null) x = 0;
+        if(y == null) y = 0;
+        if(width == null) width = game.width();
+        if(height == null) height = Math.trunc(game.height() * .25);
+        if(speed == null) speed = 16;
+        
         game.state = 'dialog';
         style = style || default_style;
         context = context || game.canvas().getContext('2d');

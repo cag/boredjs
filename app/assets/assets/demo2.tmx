@@ -50,4 +50,9 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup name="Overlay">
+  <properties>
+   <property name="onStart" value="setupOverlay"/>
+  </properties>
+ </objectgroup>
 </map>

@@ -13,13 +13,14 @@ import ui from 'ui'
 import zonko_desert from 'zonko_desert'
 
 function setupFullscreen() {
-    $('.fullscreen-toggle').click(() => {
-        if(screenfull.enabled) {
+    if(screenfull.enabled) {
+        $('.fullscreen-toggle').click(() => {
             screenfull.request(document.getElementById('game'));
-        }
-    });
+        });
+    } else {
+        $('.fullscreen-toggle').hide();
+    }
 }
-
 
 $(() => {
     // Force jQuery to grab fresh data in its Ajax requests.
@@ -47,10 +48,10 @@ $(() => {
             demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.demo2player);
             let demo_scene2 = new demo2.DemoScene(loaded.maps.demo2);
 
-            game.switchScene(demo_scene);
+            game.switchScene(demo_scene2);
         });
 
-    game.init(480, 120, 1 / 60, 1 / 20, loader_scene);
+    game.init(320, 240, 1 / 60, 1 / 20, loader_scene);
     setupFullscreen();
     $(window).resize(game.resizeCanvasToAspectRatio);
     $(game.canvas()).attr('dir', ui.isRightToLeft() ? 'rtl' : 'ltr');
