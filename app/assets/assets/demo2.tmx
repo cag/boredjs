@@ -26,7 +26,7 @@
   </data>
  </layer>
  <objectgroup name="Entities">
-  <object id="1" name="player start" x="124" y="95.25">
+  <object id="1" name="player start" x="121" y="89.25">
    <properties>
     <property name="onStart" value="handlePlayerStart"/>
    </properties>
