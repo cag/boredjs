@@ -88,10 +88,10 @@ export default {
 
     textBoxDialog(text, conf) {
         let {x, y, width, height, speed, style, context, callback} = conf;
-        if(x == null) x = 0;
-        if(y == null) y = 0;
         if(width == null) width = game.width();
         if(height == null) height = Math.trunc(game.height() * .25);
+        if(x == null) x = 0;
+        if(y == null) y = game.height() - height;
         if(speed == null) speed = 16;
         
         game.state = 'dialog';

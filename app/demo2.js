@@ -176,8 +176,8 @@ export default {
     setupOverlay(layer) {
         layer.draw = function(context, targx, targy) {
             context.beginPath();
-            context.moveTo(targx + RADIUS, targy);
-            context.arc(targx, targy, RADIUS, 0, 2 * Math.PI);
+            context.moveTo(input.pointer.x + RADIUS, input.pointer.y);
+            context.arc(input.pointer.x, input.pointer.y, RADIUS, 0, 2 * Math.PI);
             context.fillStyle = '#ff0000';
             context.fill();
         };

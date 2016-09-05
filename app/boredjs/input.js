@@ -15,6 +15,7 @@ export default {
         for (let button in this.buttons) {
             this[button] = {};
         }
+        this.pointer = { x: 0, y: 0 };
     },
 
     update() {
@@ -61,14 +62,17 @@ export default {
     },
 
     handlePointerDown(x, y) {
-        console.log('pointerdown:', x, y);
+        this.pointer.x = x;
+        this.pointer.y = y;
     },
 
     handlePointerUp(x, y) {
-        console.log('pointerup:', x, y);
+        this.pointer.x = x;
+        this.pointer.y = y;
     },
 
     handlePointerMove(x, y) {
-        console.log('pointermove:', x, y);
+        this.pointer.x = x;
+        this.pointer.y = y;
     }
 };

@@ -74,6 +74,7 @@ let handlePointerDown = function(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     input.handlePointerDown(gameX, gameY);
     event.preventDefault();
+    console.log(input.mouse);
 };
 
 let handlePointerUp = function(event) {
@@ -84,7 +85,7 @@ let handlePointerUp = function(event) {
 
 let handlePointerMove = function(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
-    input.handlePointerUp(gameX, gameY);
+    input.handlePointerMove(gameX, gameY);
     event.preventDefault();
 };
 
@@ -213,6 +214,7 @@ export default {
         window.addEventListener('keyup', handleKeyUp, false);
         $(canvas).on('touchstart mousedown', handlePointerDown);
         $(canvas).on('touchend mouseup', handlePointerUp);
+        $(canvas).on('touchmove mousemove', handlePointerMove);
     
         audio.init();
     },

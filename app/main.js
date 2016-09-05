@@ -31,14 +31,10 @@ $(() => {
             maps: {
                 demo: { file: 'assets/demo.json', script: demo },
                 demo2: { file: 'assets/demo2.json', script: demo2 },
-                // zonko_desert: { name: 'zonko_desert', script: zonko_desert}
             },
             sprites: {
                 player: 'assets/player.json',
                 demo2player: 'assets/demo2player.json',
-                // joanna: 'joanna',
-                // shaun: 'shaun',
-                // javelina: 'javelina'
             },
             sounds: {}
         }, (loaded) => {
@@ -51,7 +47,7 @@ $(() => {
             game.switchScene(demo_scene2);
         });
 
-    game.init(320, 240, 1 / 60, 1 / 20, loader_scene);
+    game.init(160, 120, 1 / 60, 1 / 20, loader_scene);
     setupFullscreen();
     $(window).resize(game.resizeCanvasToAspectRatio);
     $(game.canvas()).attr('dir', ui.isRightToLeft() ? 'rtl' : 'ltr');
