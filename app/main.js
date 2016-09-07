@@ -49,7 +49,7 @@ $(() => {
             game.switchScene(demo_scene2);
         });
 
-    game.init(160, 120, 1 / 60, 1 / 20, loader_scene);
+    game.init(160, 90, 1 / 60, 1 / 20, loader_scene);
     setupFullscreen();
     $(window).resize(game.resizeCanvasToAspectRatio);
     $(game.canvas()).attr('dir', ui.isRightToLeft() ? 'rtl' : 'ltr');

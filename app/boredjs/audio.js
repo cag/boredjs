@@ -15,7 +15,6 @@ import util from './util'
 // createOscillator()
 // createPanner()
 // createPeriodicWave()
-// createScriptProcessor()
 // currentTime
 // decodeAudioData()
 // destination
