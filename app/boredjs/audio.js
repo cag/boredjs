@@ -1,5 +1,32 @@
 import util from './util'
 
+// Stuff you can use on AudioContext:
+// close()
+// createAnalyser()
+// createBuffer()
+// createBufferSource()
+// createChannelMerger()
+// createChannelSplitter()
+// createConvolver()
+// createDelay()
+// createDynamicsCompressor()
+// createGain()
+// createMediaElementSource()
+// createOscillator()
+// createPanner()
+// createPeriodicWave()
+// createScriptProcessor()
+// currentTime
+// decodeAudioData()
+// destination
+// listener
+// onstatechange
+// resume()
+// sampleRate
+// state
+// suspend()
+
+
 // Thanks Boris Smus for the [Web Audio tutorial](http://www.html5rocks.com/en/tutorials/webaudio/intro/).
 window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
 let audio_context = null;
@@ -12,7 +39,6 @@ export default {
         } else {
             console.warn('could not initialize audio!');
         }
-        console.log(audio_context);
     },
 
     // See the [Web Audio API](https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html)
@@ -21,15 +47,15 @@ export default {
 
     // The `Sound` class handles loading sound buffers and playing them.
     Sound: class {
-        constructor(name, onload) {
-            this.name = name;
+        constructor(file, onload) {
+            this.file = file;
             if (audio_context == null) {
                 if (onload != null) { onload(); }
                 return;
             }
         
             let request = new XMLHttpRequest();
-            request.open('GET', this.name, true);
+            request.open('GET', this.file, true);
             request.responseType = 'arraybuffer';
         
             request.onload = () =>
@@ -48,12 +74,12 @@ export default {
         // Pass in a node to connect to if not playing this sound
         // straight to output.
         play(delay = 0, looped = false, node) {
-            if ((audio_context != null) && (this.buffer != null)) {
+            if(audio_context != null && this.buffer != null) {
                 let source = audio_context.createBufferSource();
                 source.buffer = this.buffer;
                 source.loop = looped;
                 source.connect(node || audio_context.destination);
-                source.noteOn(delay + audio_context.currentTime);
+                source.start(delay + audio_context.currentTime);
                 return source;
             }
             return null;

@@ -74,7 +74,6 @@ let handlePointerDown = function(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     input.handlePointerDown(gameX, gameY);
     event.preventDefault();
-    console.log(input.mouse);
 };
 
 let handlePointerUp = function(event) {

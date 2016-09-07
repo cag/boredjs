@@ -36,7 +36,9 @@ $(() => {
                 player: 'assets/player.json',
                 demo2player: 'assets/demo2player.json',
             },
-            sounds: {}
+            sounds: {
+                noise: 'assets/white_noise.ogg'
+            }
         }, (loaded) => {
             demo.setPlayerSprite(loaded.sprites.player);
             let demo_scene = new map.MapScene(loaded.maps.demo);
