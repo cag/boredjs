@@ -1,4 +1,4 @@
-module.exports = {
+let config = {
   files: {
     javascripts: {
       joinTo: {
@@ -18,3 +18,14 @@ module.exports = {
     hostname: '0.0.0.0'
   }
 };
+
+try {
+  require('./local-config')(config);
+} catch(e) {
+  if(e.code === 'MODULE_NOT_FOUND')
+    console.log('No local configuration loaded');
+  else
+    throw e;
+}
+
+module.exports = config;

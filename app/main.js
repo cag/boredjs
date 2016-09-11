@@ -37,7 +37,7 @@ $(() => {
                 demo2player: 'assets/demo2player.json',
             },
             sounds: {
-                noise: 'assets/white_noise.ogg'
+                noise: 'assets/drums.mp3'
             }
         }, (loaded) => {
             demo.setPlayerSprite(loaded.sprites.player);
@@ -45,6 +45,8 @@ $(() => {
 
             demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.demo2player);
             let demo_scene2 = new demo2.DemoScene(loaded.maps.demo2);
+
+            // loaded.sounds.noise.play();
 
             game.switchScene(demo_scene2);
         });

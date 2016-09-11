@@ -12,6 +12,7 @@
     "screenfull": "^3.0.2"
   },
   "devDependencies": {
+    "aseprite-brunch": "^1.0.0",
     "auto-reload-brunch": "^2.7.1",
     "babel-brunch": "^6.0.4",
     "brunch": "^2.8.0",

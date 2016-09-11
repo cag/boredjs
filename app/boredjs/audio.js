@@ -47,6 +47,7 @@ export default {
     // The `Sound` class handles loading sound buffers and playing them.
     Sound: class {
         constructor(file, onload) {
+            // console.log(file);
             this.file = file;
             if (audio_context == null) {
                 if (onload != null) { onload(); }
@@ -57,17 +58,21 @@ export default {
             request.open('GET', this.file, true);
             request.responseType = 'arraybuffer';
         
-            request.onload = () =>
+            request.onload = () => {
+                console.log('in onload');
                 audio_context.decodeAudioData(request.response,
                     (buffer) => {
+                        console.log('success');
                         this.buffer = buffer;
                         if (onload != null) { onload(); }
-                    }, function() {
+                    }, () => {
+                        console.log('failure');
                         throw Error(`could not load sound buffer from ${url}`);
-                    })
-            ;
+                    });
+            };
         
             request.send();
+            console.log(request);
         }
     
         // Pass in a node to connect to if not playing this sound
