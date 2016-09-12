@@ -41,7 +41,7 @@ class Character extends entity.Entity {
     constructor(x, y, shape, sprite) {
         super(x, y, shape);
         this.sprite = sprite;
-        this.sprite.startAnimation('look down');
+        this.sprite.startAnimation('D');
     }
 
     draw(context, offx, offy) {
@@ -52,8 +52,7 @@ class Character extends entity.Entity {
 class PlayerCharacter extends Character {
     constructor(x, y, shape, sprite) {
         super(x, y, shape, sprite);
-        this.dir = 'down';
-        this.state = `look ${this.dir}`;
+        this.state = this.dir = 'D';
         let map = game.currentScene().map;
         let player = this;
         let ent_layer = map.getLayerByName('Entities');
@@ -65,7 +64,7 @@ class PlayerCharacter extends Character {
                 if (!(ent.onActivate != null) && (ent.properties != null)) {
                     ent.onActivate = map.tryGettingCallbackForName(ent.properties.onActivate);
                 }
-                player.sprite.startAnimation(`look ${player.dir}`);
+                player.sprite.startAnimation(`${player.dir}`);
                 ent.onActivate(ent);
             }
         };
@@ -108,7 +107,7 @@ class PlayerCharacter extends Character {
                 // } else if (vyc > 0.0) {
                 //     this.dir = 'down-left';
                 // } else {
-                    this.dir = 'left';
+                    this.dir = 'L';
                 // }
             } else if (vxc > 0.0) {
                 // if (vyc < 0.0) {
@@ -116,20 +115,20 @@ class PlayerCharacter extends Character {
                 // } else if (vyc > 0.0) {
                 //     this.dir = 'down-right';
                 // } else {
-                    this.dir = 'right';
+                    this.dir = 'R';
                 // }
             } else {
                 if (vyc < 0.0) {
-                    this.dir = 'up';
+                    this.dir = 'U';
                 } else if (vyc > 0.0) {
-                    this.dir = 'down';
+                    this.dir = 'D';
                 }
             }
 
             if (vyc === 0.0 && vxc === 0.0) {
-                switchStateTo(`look ${this.dir}`);
+                switchStateTo(this.dir);
             } else {
-                switchStateTo(`go ${this.dir}`);
+                switchStateTo(`W${this.dir}`);
             }
 
             this.state = state;
@@ -137,16 +136,16 @@ class PlayerCharacter extends Character {
             this.velocity = [48.0 * vxc * inv_spd_c, 48.0 * vyc * inv_spd_c];
             physics.integrate(this, dt);
 
-            if (this.dir === 'left') {
+            if (this.dir === 'L') {
                 this.activation_point_check.x = this.x + 2 * this.shape.bounds_offsets[0];
                 this.activation_point_check.y = this.y;
-            } else if (this.dir === 'right') {
+            } else if (this.dir === 'R') {
                 this.activation_point_check.x = this.x + 2 * this.shape.bounds_offsets[1];
                 this.activation_point_check.y = this.y;
-            } else if (this.dir === 'up') {
+            } else if (this.dir === 'U') {
                 this.activation_point_check.x = this.x;
                 this.activation_point_check.y = this.y + 2 * this.shape.bounds_offsets[2];
-            } else if (this.dir === 'down') {
+            } else if (this.dir === 'D') {
                 this.activation_point_check.x = this.x;
                 this.activation_point_check.y = this.y + 2 * this.shape.bounds_offsets[3];
             } else if (this.dir === 'up-left') {

@@ -33,8 +33,7 @@ $(() => {
                 demo2: { file: 'assets/demo2.json', script: demo2 },
             },
             sprites: {
-                player: 'assets/player.json',
-                demo2player: 'assets/demo2player.json',
+                monk: 'assets/monk'
             },
             sounds: {
                 noise: 'assets/drums.mp3'
@@ -43,7 +42,7 @@ $(() => {
             demo.setPlayerSprite(loaded.sprites.player);
             let demo_scene = new map.MapScene(loaded.maps.demo);
 
-            demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.demo2player);
+            demo2.setPlayerMetadata(new geometry.Aabb([4, 4]), loaded.sprites.monk);
             let demo_scene2 = new demo2.DemoScene(loaded.maps.demo2);
 
             // loaded.sounds.noise.play();

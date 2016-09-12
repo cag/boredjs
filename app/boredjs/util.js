@@ -124,5 +124,22 @@ export default {
             update: updateGen,
             draw: drawGen
         };
-    }
+    },
+
+    getImage(path) {
+        return new Promise((resolve, reject) => {
+            let image = new Image();
+            image.onload = () => {
+                resolve(image);
+            };
+            image.onerror = () => {
+                reject(Error(`could not load image '${path}'`));
+            };
+            image.src = path;
+        });
+    },
+
+    escapeForRegExp(text) {
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    },
 };
