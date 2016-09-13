@@ -170,14 +170,17 @@ class PlayerCharacter extends Character {
 let player = null;
 let player_shape = null;
 let player_sprite = null;
-const RADIUS = 1;
+const RADIUS = 10;
 export default {
     setupOverlay(layer) {
         layer.draw = function(context, targx, targy) {
             context.beginPath();
             context.moveTo(input.pointer.x + RADIUS, input.pointer.y);
             context.arc(input.pointer.x, input.pointer.y, RADIUS, 0, 2 * Math.PI);
-            context.fillStyle = '#ff0000';
+            context.fillStyle = '#' +
+                (input.pointer.state ? 'ff' : '00') + 
+                (input.pointer.pressed ? 'ff' : '00') + 
+                (input.pointer.released ? 'ff' : '00');
             context.fill();
         };
     },

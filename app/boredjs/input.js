@@ -13,7 +13,11 @@ export default {
     init(buttons) {
         this.buttons = buttons || this.default_buttons;
         for (let button in this.buttons) {
-            this[button] = {};
+            if(button in this) {
+                console.warn(`${button} cannot be a button name!`)
+            } else {
+                this[button] = {};
+            }
         }
         this.pointer = { x: 0, y: 0 };
     },
@@ -22,41 +26,44 @@ export default {
         // Each button's pressed and released states stay true for only
         // up to one frame per press.
         let updateInputHash = function(hash) {
-            if (hash.state) {
-                if (hash.last_state) {
-                    hash.pressed = false;
-                } else {
-                    hash.pressed = true;
-                }
+            if(hash.pressedDuringLastFrame) {
+                hash.pressed = true;
+                hash.state = true;
+                hash.pressedDuringLastFrame = false;
             } else {
-                if (hash.last_state) {
-                    hash.released = true;
-                } else {
-                    hash.released = false;
-                }
+                hash.pressed = false;
             }
-            hash.last_state = hash.state;
+
+            if(hash.releasedDuringLastFrame) {
+                hash.released = true;
+                hash.state = false;
+                hash.releasedDuringLastFrame = false;
+            } else {
+                hash.released = false;
+            }
         };
     
         for (let button in this.buttons) {
             updateInputHash(this[button]);
         }
+
+        updateInputHash(this.pointer)
     },
 
     handleKeyDown(keyCode) {
-        for (let button in this.buttons) {
+        for(let button in this.buttons) {
             let bcode = this.buttons[button];
             if (keyCode === bcode) {
-                this[button].state = true;
+                this[button].pressedDuringLastFrame = true;
             }
         }
     },
 
     handleKeyUp(keyCode) {
-        for (let button in this.buttons) {
+        for(let button in this.buttons) {
             let bcode = this.buttons[button];
             if (keyCode === bcode) {
-                this[button].state = false;
+                this[button].releasedDuringLastFrame = true;
             }
         }
     },
@@ -64,11 +71,13 @@ export default {
     handlePointerDown(x, y) {
         this.pointer.x = x;
         this.pointer.y = y;
+        this.pointer.pressedDuringLastFrame = true;
     },
 
     handlePointerUp(x, y) {
         this.pointer.x = x;
         this.pointer.y = y;
+        this.pointer.releasedDuringLastFrame = true;
     },
 
     handlePointerMove(x, y) {

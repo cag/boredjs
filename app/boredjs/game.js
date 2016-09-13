@@ -32,16 +32,7 @@ let dt_clamp = 50,
 let update_coroutines = [],
     draw_coroutines = [];
 
-// Callbacks for keys are delegated to the input module.
-let handleKeyDown = function(event) {
-    input.handleKeyDown(event.keyCode);
-};
-
-let handleKeyUp = function(event) {
-    input.handleKeyUp(event.keyCode);
-};
-
-let getGameSpaceCoordinatesFromEvent = function(event) {
+function getGameSpaceCoordinatesFromEvent(event) {
     let offsetX = event.offsetX,
         offsetY = event.offsetY;
 
@@ -49,14 +40,18 @@ let getGameSpaceCoordinatesFromEvent = function(event) {
         let pageX = event.pageX,
             pageY = event.pageY;
 
-        if(pageX == null || pageY == null) {
+        if((pageX == null || pageY == null) && event.touches && event.touches[0]) {
             pageX = event.touches[0].pageX;
             pageY = event.touches[0].pageY;
         }
 
         if(pageX == null || pageY == null) {
-            console.error('could not get pageX or pageY from event!');
-            console.error(event);
+            if(event.type === 'touchend') {
+                return [input.pointer.x, input.pointer.y];
+            } else {
+                console.error('could not get pageX or pageY from event!');
+                console.error(event);
+            }
         }
         offsetX = pageX - canvas_left_offset;
         offsetY = pageY - canvas_top_offset;
@@ -70,26 +65,26 @@ let getGameSpaceCoordinatesFromEvent = function(event) {
 };
 
 // Callbacks for the pointer are also delegated to the input module after processing
-let handlePointerDown = function(event) {
+function handlePointerDown(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     input.handlePointerDown(gameX, gameY);
     event.preventDefault();
 };
 
-let handlePointerUp = function(event) {
+function handlePointerUp(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     input.handlePointerUp(gameX, gameY);
     event.preventDefault();
 };
 
-let handlePointerMove = function(event) {
+function handlePointerMove(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     input.handlePointerMove(gameX, gameY);
     event.preventDefault();
 };
 
 // Advances the execution state of a set of coroutines with a parameter
-let advanceCoroutines = function(coroutines, arg) {
+function advanceCoroutines(coroutines, arg) {
     for (let i = coroutines.length-1; i >= 0; i--) {
         let coroutine = coroutines[i];
         coroutine.next(arg);
@@ -100,14 +95,14 @@ let advanceCoroutines = function(coroutines, arg) {
 };
 
 // Update call.
-let update = function(dt) {
+function update(dt) {
     input.update();
     current_scene.update(dt);
     advanceCoroutines(update_coroutines, dt);
 };
 
 // Draw call.
-let draw = function() {
+function draw() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.save();
     context.translate(game_x_offset, game_y_offset);
@@ -122,7 +117,7 @@ let draw = function() {
 };
 
 // Canvas resizing callback
-let resizeCanvasToAspectRatio = function() {
+function resizeCanvasToAspectRatio() {
     // First set these so that canvas will attempt to be at the right size
     canvas.width = game_w;
     canvas.height = game_h;
@@ -172,7 +167,7 @@ export default {
 
     // Switch scene to new scene.
     switchScene(new_scene) {
-        if (new_scene == null) { throw 'cannot switch to nonexistent scene'; }
+        if (new_scene == null) { throw Error('cannot switch to nonexistent scene'); }
         current_scene.end();
         current_scene = new_scene;
         current_scene.start();
@@ -209,11 +204,15 @@ export default {
     
         input.init();
     
-        window.addEventListener('keydown', handleKeyDown, false);
-        window.addEventListener('keyup', handleKeyUp, false);
-        $(canvas).on('touchstart mousedown', handlePointerDown);
-        $(canvas).on('touchend mouseup', handlePointerUp);
-        $(canvas).on('touchmove mousemove', handlePointerMove);
+        $(window)
+            .on('keydown', (e) => { input.handleKeyDown(e.keyCode); })
+            .on('keyup', (e) => { input.handleKeyUp(e.keyCode); });
+
+        $(canvas)
+            .on('touchstart mousedown', handlePointerDown)
+            .on('touchend mouseup', handlePointerUp)
+            .on('touchmove mousemove', handlePointerMove)
+            .on('contextmenu', (e) => { e.preventDefault(); });
     
         audio.init();
     },
