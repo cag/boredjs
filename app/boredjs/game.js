@@ -40,9 +40,16 @@ function getGameSpaceCoordinatesFromEvent(event) {
         let pageX = event.pageX,
             pageY = event.pageY;
 
-        if((pageX == null || pageY == null) && event.touches && event.touches[0]) {
-            pageX = event.touches[0].pageX;
-            pageY = event.touches[0].pageY;
+        if((pageX == null || pageY == null) && event.touches && event.touches.length > 0) {
+            let numTouches = event.touches.length;
+            pageX = 0;
+            pageY = 0;
+            for(let i = 0; i < numTouches; i++) {
+                pageX += event.touches[i].pageX;
+                pageY += event.touches[i].pageY;
+            }
+            pageX /= numTouches;
+            pageY /= numTouches;
         }
 
         if(pageX == null || pageY == null) {
@@ -65,15 +72,41 @@ function getGameSpaceCoordinatesFromEvent(event) {
 };
 
 // Callbacks for the pointer are also delegated to the input module after processing
+let trackedPointerId = null;
+
 function handlePointerDown(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
-    input.handlePointerDown(gameX, gameY);
+    if(trackedPointerId == null) {
+        if(event.type.startsWith('mouse') && event.button === 0) {
+            trackedPointerId = `mouse${event.button}`;
+            input.handlePointerDown(gameX, gameY);
+        } else if(event.type.startsWith('touch')) {
+            trackedPointerId = `touch${event.changedTouches[0].identifier}`;
+            input.handlePointerDown(gameX, gameY);
+        }
+        console.log(trackedPointerId);
+    }
     event.preventDefault();
 };
 
 function handlePointerUp(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
-    input.handlePointerUp(gameX, gameY);
+    if(trackedPointerId != null) {
+        if(event.type.startsWith('mouse') && trackedPointerId === `mouse${event.button}`) {
+            console.log('mouseup');
+            trackedPointerId = null;
+            input.handlePointerUp(gameX, gameY);
+        } else if(event.type.startsWith('touch')) {
+            for(let i = 0; i < event.changedTouches.length; i++) {
+                if(trackedPointerId === `touch${event.changedTouches[i].identifier}`) {
+                    console.log('touchup');
+                    trackedPointerId = null;
+                    input.handlePointerUp(gameX, gameY);
+                    break;
+                }
+            }
+        }
+    }
     event.preventDefault();
 };
 
@@ -212,7 +245,7 @@ export default {
             .on('touchstart mousedown', handlePointerDown)
             .on('touchend mouseup', handlePointerUp)
             .on('touchmove mousemove', handlePointerMove)
-            .on('contextmenu', (e) => { e.preventDefault(); });
+            .on('contextmenu taphold', (e) => { e.preventDefault(); });
     
         audio.init();
     },
