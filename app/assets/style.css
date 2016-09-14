@@ -61,7 +61,16 @@ pre {
 
   background-color: #111;
   cursor: none;
-  width: 50%;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 640px;
+  height: 360px;
+  max-width: 100%;
+  max-height: 100%;
 
   -webkit-touch-callout: none !important;
   -webkit-user-select: none !important;
