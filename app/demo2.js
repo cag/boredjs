@@ -178,8 +178,8 @@ export default {
             context.moveTo(input.pointer.x + RADIUS, input.pointer.y);
             context.arc(input.pointer.x, input.pointer.y, RADIUS, 0, 2 * Math.PI);
             context.fillStyle = '#' +
-                (input.pointer.state ? 'ff' : '00') + 
-                (input.pointer.pressed ? 'ff' : '00') + 
+                (input.pointer.state ? 'ff' : '00') +
+                (input.pointer.pressed ? 'ff' : '00') +
                 (input.pointer.released ? 'ff' : '00');
             context.fill();
         };

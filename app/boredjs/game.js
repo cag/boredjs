@@ -76,7 +76,7 @@ let trackedPointerId = null;
 
 function handlePointerDown(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
-    if(trackedPointerId == null) {
+    if(trackedPointerId == null || (event.touches && event.touches.length === 1)) {
         if(event.type.startsWith('mouse') && event.button === 0) {
             trackedPointerId = `mouse${event.button}`;
             input.handlePointerDown(gameX, gameY);
@@ -84,7 +84,7 @@ function handlePointerDown(event) {
             trackedPointerId = `touch${event.changedTouches[0].identifier}`;
             input.handlePointerDown(gameX, gameY);
         }
-        console.log(trackedPointerId);
+        // console.log(trackedPointerId);
     }
     event.preventDefault();
 };
@@ -93,13 +93,13 @@ function handlePointerUp(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     if(trackedPointerId != null) {
         if(event.type.startsWith('mouse') && trackedPointerId === `mouse${event.button}`) {
-            console.log('mouseup');
+            // console.log('mouseup');
             trackedPointerId = null;
             input.handlePointerUp(gameX, gameY);
         } else if(event.type.startsWith('touch')) {
             for(let i = 0; i < event.changedTouches.length; i++) {
                 if(trackedPointerId === `touch${event.changedTouches[i].identifier}`) {
-                    console.log('touchup');
+                    // console.log('touchup');
                     trackedPointerId = null;
                     input.handlePointerUp(gameX, gameY);
                     break;
