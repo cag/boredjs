@@ -18,12 +18,14 @@ let fadeIn = function(duration, callback) {
         if (callback != null) { return callback(); }
     };
     let drawGenerator = function*() {
-        return yield* (function*() { let result = []; while (t_accum < duration) {
+        while (t_accum < duration) {
             let context = yield undefined;
-            let alpha = 1.0 - (Math.min(t_accum / duration, 1.0));
-            context.fillStyle = `rgba(0,0,0,${alpha})`;
-            result.push(context.fillRect(0, 0, game.width(), game.height()));
-        } return result; }).call(this);
+            context.save();
+            context.globalAlpha = 1.0 - (Math.min(t_accum / duration, 1.0));
+            context.fillStyle = 'black';
+            context.fillRect(0, 0, game.width(), game.height());
+            context.restore();
+        }
     };
 
     return util.prepareCoroutineSet(updateGenerator, drawGenerator);
@@ -46,6 +48,15 @@ class Character extends entity.Entity {
 
     draw(context, offx, offy) {
         this.sprite.draw(context, this.x + offx, this.y + offy, this.facing_left);
+        // context.beginPath();
+        // context.moveTo(
+        //     game.currentScene().map.camera.x + offx,
+        //     game.currentScene().map.camera.y + offy
+        // );
+        // let [px, py] = game.currentScene().screenToGameCoordinates(input.pointer.x, input.pointer.y)
+        // context.lineTo(px + offx, py + offy);
+        // context.strokeStyle = '#ffffff'
+        // context.stroke();
     }
 }
 
@@ -60,7 +71,7 @@ class PlayerCharacter extends Character {
         this.activation_point_check = new entity.Entity(x, y + 2 * this.shape.bounds_offsets[3], new geometry.Point());
         this.activation_point_check.collides = util.constructBitmask([0]);
         this.activation_point_check.onCollide = function(ent, info) {
-            if (game.state === 'world' && input.jump.pressed) {
+            if (game.state === 'world' && input.pointer.pressed) {
                 if (!(ent.onActivate != null) && (ent.properties != null)) {
                     ent.onActivate = map.tryGettingCallbackForName(ent.properties.onActivate);
                 }
@@ -77,8 +88,10 @@ class PlayerCharacter extends Character {
     }
 
     update(dt) {
-        let { sprite, state } = this;
-        let switchStateTo = function(name) {
+        let { sprite, state } = this,
+            scene = game.currentScene();
+
+        function switchStateTo(name) {
             if (state !== name) {
                 sprite.startAnimation(name);
                 state = name;
@@ -86,8 +99,21 @@ class PlayerCharacter extends Character {
         };
 
         if (game.state === 'world') {
-            let vxc = 0.0;
-            let vyc = 0.0;
+            let vxc = 0.0, vyc = 0.0;
+
+            if(input.pointer.state) {
+                let [pgx, pgy] = scene.screenToGameCoordinates(input.pointer.x, input.pointer.y),
+                    dx = pgx - this.x,
+                    dy = pgy - this.y;
+
+                if(Math.abs(dx) >= util.EPSILON && Math.abs(dy) >= util.EPSILON) {
+                    let invPNorm = 1 / Math.sqrt(dx * dx + dy * dy);
+                    vxc = dx * invPNorm;
+                    vyc = dy * invPNorm;
+                }
+            }
+
+
 
             if (input.left.state && !input.right.state) {
                 vxc = -1.0;
@@ -107,7 +133,8 @@ class PlayerCharacter extends Character {
                 // } else if (vyc > 0.0) {
                 //     this.dir = 'down-left';
                 // } else {
-                    this.dir = 'L';
+                    this.dir = 'R';
+                    this.facing_left = true;
                 // }
             } else if (vxc > 0.0) {
                 // if (vyc < 0.0) {
@@ -116,6 +143,7 @@ class PlayerCharacter extends Character {
                 //     this.dir = 'down-right';
                 // } else {
                     this.dir = 'R';
+                    this.facing_left = false;
                 // }
             } else {
                 if (vyc < 0.0) {
@@ -136,30 +164,9 @@ class PlayerCharacter extends Character {
             this.velocity = [48.0 * vxc * inv_spd_c, 48.0 * vyc * inv_spd_c];
             physics.integrate(this, dt);
 
-            if (this.dir === 'L') {
-                this.activation_point_check.x = this.x + 2 * this.shape.bounds_offsets[0];
-                this.activation_point_check.y = this.y;
-            } else if (this.dir === 'R') {
-                this.activation_point_check.x = this.x + 2 * this.shape.bounds_offsets[1];
-                this.activation_point_check.y = this.y;
-            } else if (this.dir === 'U') {
-                this.activation_point_check.x = this.x;
-                this.activation_point_check.y = this.y + 2 * this.shape.bounds_offsets[2];
-            } else if (this.dir === 'D') {
-                this.activation_point_check.x = this.x;
-                this.activation_point_check.y = this.y + 2 * this.shape.bounds_offsets[3];
-            } else if (this.dir === 'up-left') {
-                this.activation_point_check.x = this.x + Math.sqrt(2) * this.shape.bounds_offsets[0];
-                this.activation_point_check.y = this.y + Math.sqrt(2) * this.shape.bounds_offsets[2];
-            } else if (this.dir === 'up-right') {
-                this.activation_point_check.x = this.x + Math.sqrt(2) * this.shape.bounds_offsets[1];
-                this.activation_point_check.y = this.y + Math.sqrt(2) * this.shape.bounds_offsets[2];
-            } else if (this.dir === 'down-left') {
-                this.activation_point_check.x = this.x + Math.sqrt(2) * this.shape.bounds_offsets[0];
-                this.activation_point_check.y = this.y + Math.sqrt(2) * this.shape.bounds_offsets[3];
-            } else if (this.dir === 'down-right') {
-                this.activation_point_check.x = this.x + Math.sqrt(2) * this.shape.bounds_offsets[1];
-                this.activation_point_check.y = this.y + Math.sqrt(2) * this.shape.bounds_offsets[3];
+            if(vxc !== 0.0 || vyc !== 0.0) {
+                this.activation_point_check.x = this.x + vxc * 2 * this.shape.bounds_offsets[1];
+                this.activation_point_check.y = this.y + vyc * 2 * this.shape.bounds_offsets[3];
             }
         }
 
@@ -178,11 +185,11 @@ export default {
                 context.beginPath();
                 context.moveTo(input.pointer.x + RADIUS, input.pointer.y);
                 context.arc(input.pointer.x, input.pointer.y, RADIUS, 0, 2 * Math.PI);
-                context.fillStyle = '#' +
+                context.strokeStyle = '#' +
                     (input.pointer.state ? 'ff' : '00') +
                     (input.pointer.pressed ? 'ff' : '00') +
                     (input.pointer.released ? 'ff' : '00');
-                context.fill();
+                context.stroke();
             }
         };
     },

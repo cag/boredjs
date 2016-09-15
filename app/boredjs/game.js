@@ -258,7 +258,7 @@ export default {
 
         $(canvas)
             .on('touchstart mousedown', handlePointerDown)
-            .on('touchend mouseup', handlePointerUp)
+            .on('touchend touchcancel mouseup', handlePointerUp)
             .on('touchmove mousemove', handlePointerMove)
             .on('mouseenter', (e) => { input.handlePointerEnter(); })
             .on('mouseleave', (e) => { input.handlePointerExit(); })

@@ -110,7 +110,7 @@ export default {
         let updateGenerator = function*() {
             while (cur_line_idx < word_wrapped_text.length) {
                 let dt = yield undefined,
-                    delta = dt * speed * (input.jump.state ? 3.0 : 1.0);
+                    delta = dt * speed * (input.pointer.state ? 3.0 : 1.0);
                 if (lines_scrolled >= cur_line_idx - num_lines_per_screen + 1) {
                     new_line_progress = line_progress + delta;
                 } else {
@@ -143,7 +143,7 @@ export default {
             //     });
             // }
             displayed_text = word_wrapped_text;
-            while (!input.jump.pressed) { let dt = yield undefined; }
+            while (!input.pointer.pressed) { let dt = yield undefined; }
             done = true;
             if (callback != null) { return callback(); }
         };
