@@ -174,14 +174,16 @@ const RADIUS = 10;
 export default {
     setupOverlay(layer) {
         layer.draw = function(context, targx, targy) {
-            context.beginPath();
-            context.moveTo(input.pointer.x + RADIUS, input.pointer.y);
-            context.arc(input.pointer.x, input.pointer.y, RADIUS, 0, 2 * Math.PI);
-            context.fillStyle = '#' +
-                (input.pointer.state ? 'ff' : '00') +
-                (input.pointer.pressed ? 'ff' : '00') +
-                (input.pointer.released ? 'ff' : '00');
-            context.fill();
+            if(input.pointer.active) {
+                context.beginPath();
+                context.moveTo(input.pointer.x + RADIUS, input.pointer.y);
+                context.arc(input.pointer.x, input.pointer.y, RADIUS, 0, 2 * Math.PI);
+                context.fillStyle = '#' +
+                    (input.pointer.state ? 'ff' : '00') +
+                    (input.pointer.pressed ? 'ff' : '00') +
+                    (input.pointer.released ? 'ff' : '00');
+                context.fill();
+            }
         };
     },
 

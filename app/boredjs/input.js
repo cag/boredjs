@@ -68,6 +68,14 @@ export default {
         }
     },
 
+    handlePointerEnter() {
+        this.pointer.active = true;
+    },
+
+    handlePointerExit() {
+        this.pointer.active = false;
+    },
+
     handlePointerDown(x, y) {
         this.pointer.x = x;
         this.pointer.y = y;
