@@ -32,36 +32,48 @@ let dt_clamp = 50,
 let update_coroutines = [],
     draw_coroutines = [];
 
+let trackedPointerId = null;
 function getGameSpaceCoordinatesFromEvent(event) {
-    let offsetX = event.offsetX,
-        offsetY = event.offsetY;
+    let offsetX, offsetY, touch;
+
+    if(event.type.startsWith('touch') && trackedPointerId != null) {
+        for(let i = 0; i < event.touches.length; i++) {
+            if(`touch${event.touches[i].identifier}` === trackedPointerId) {
+                touch = event.touches[i];
+                break;
+            }
+        }
+    }
+
+    if(touch != null) {
+        offsetX = touch.offsetX;
+        offsetY = touch.offsetY;
+
+        if((offsetX == null || offsetY == null) &&
+            touch.pageX != null && touch.pageY != null) {
+            offsetX = touch.pageX - canvas_left_offset;
+            offsetY = touch.pageY - canvas_top_offset;
+        }
+    }
 
     if(offsetX == null || offsetY == null) {
-        let pageX = event.pageX,
-            pageY = event.pageY;
+        offsetX = event.offsetX;
+        offsetY = event.offsetY;
+    }
 
-        if((pageX == null || pageY == null) && event.touches && event.touches.length > 0) {
-            let numTouches = event.touches.length;
-            pageX = 0;
-            pageY = 0;
-            for(let i = 0; i < numTouches; i++) {
-                pageX += event.touches[i].pageX;
-                pageY += event.touches[i].pageY;
-            }
-            pageX /= numTouches;
-            pageY /= numTouches;
-        }
+    if((offsetX == null || offsetY == null) &&
+        event.pageX != null && event.pageY != null) {
+        offsetX = event.pageX - canvas_left_offset;
+        offsetY = event.pageY - canvas_top_offset;
+    }
 
-        if(pageX == null || pageY == null) {
-            if(event.type === 'touchend') {
-                return [input.pointer.x, input.pointer.y];
-            } else {
-                console.error('could not get pageX or pageY from event!');
-                console.error(event);
-            }
+    if(offsetX == null || offsetY == null) {
+        if(event.type === 'touchend') {
+            return [input.pointer.x, input.pointer.y];
+        } else {
+            console.error('could not get offsetX or offsetY from event!');
+            console.error(event);
         }
-        offsetX = pageX - canvas_left_offset;
-        offsetY = pageY - canvas_top_offset;
     }
 
     return [
@@ -72,8 +84,6 @@ function getGameSpaceCoordinatesFromEvent(event) {
 };
 
 // Callbacks for the pointer are also delegated to the input module after processing
-let trackedPointerId = null;
-
 function handlePointerDown(event) {
     let [gameX, gameY] = getGameSpaceCoordinatesFromEvent(event);
     if(trackedPointerId == null || (event.touches && event.touches.length === 1)) {
