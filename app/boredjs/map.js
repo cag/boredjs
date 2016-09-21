@@ -743,7 +743,7 @@ export default {
             context.beginPath();
         
             this.map.draw(context, hgw, hgh);
-            if (input.debug.state || true) { this.map.debugDraw(context, hgw, hgh); }
+            if (input.debug.state) { this.map.debugDraw(context, hgw, hgh); }
         }
 
         screenToGameCoordinates(screenX, screenY) {
