@@ -37,6 +37,9 @@ $(() => {
             },
             sounds: {
                 noise: 'assets/drums.mp3'
+            },
+            fonts: {
+                fondamento: 'Roboto Mono'
             }
         }, (loaded) => {
             demo.setPlayerSprite(loaded.sprites.player);

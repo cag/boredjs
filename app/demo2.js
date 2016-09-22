@@ -215,7 +215,25 @@ export default {
         let td = layer.data[tx][ty].slice();
         td[0]++;
         layer.setTile(tx, ty, td);
-        ui.textBoxDialog('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', {
+        ui.textBoxDialog(`Who made the world?
+Who made the swan, and the black bear?
+Who made the grasshopper?
+This grasshopper, I mean-
+the one who has flung herself out of the grass,
+the one who is eating sugar out of my hand,
+who is moving her jaws back and forth instead of up and down-
+who is gazing around with her enormous and complicated eyes.
+Now she lifts her pale forearms and thoroughly washes her face.
+Now she snaps her wings open, and floats away.
+I don't know exactly what a prayer is.
+I do know how to pay attention, how to fall down
+into the grass, how to kneel down in the grass,
+how to be idle and blessed, how to stroll through the fields,
+which is what I have been doing all day.
+Tell me, what else should I have done?
+Doesn't everything die at last, and too soon?
+Tell me, what is it you plan to do
+with your one wild and precious life?`, {
             // width: 160,
             // height: 44,
             // speed: 10.0,

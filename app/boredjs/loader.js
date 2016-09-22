@@ -1,3 +1,5 @@
+import FontFaceObserver from 'fontfaceobserver'
+
 import map from './map'
 import sprite from './sprite'
 import audio from './audio'
@@ -14,6 +16,9 @@ import audio from './audio'
 //         sounds:
 //             SOUNDVAR: SOUNDNAME,
 //             ...
+//         fonts:
+//             FONTVAR: FONTNAME,
+//             ...
 //     }
 //
 // The resources will load into an object of the form:
@@ -28,6 +33,9 @@ import audio from './audio'
 //         sounds:
 //             SOUNDVAR: SOUND,
 //             ...
+//         fonts:
+//             FONTVAR: FONTOBSERVERPROMISE,
+//             ...
 //     }
 // 
 // This object will be passed into the `@onload` callback, which
@@ -40,7 +48,8 @@ export default {
             this.loaded = {
                 maps: {},
                 sprites: {},
-                sounds: {}
+                sounds: {},
+                fonts: {}
             };
         
             let resource_count = 0;
@@ -51,7 +60,7 @@ export default {
             this.resource_count = resource_count;
         
             if (resource_count <= 0) {
-                throw `invalid resource count (${resource_count})`;
+                throw Error(`invalid resource count (${resource_count})`);
             }
         }
     
@@ -78,7 +87,8 @@ export default {
             for (let type in this.resources) {
                 let obj = this.resources[type];
                 let target = this.loaded[type];
-            
+
+                // TODO: promisify and refactor this
                 if (type === 'maps') {
                     for (let key in obj) {
                         let res = obj[key];
@@ -94,6 +104,11 @@ export default {
                     for (let key in obj) {
                         let res = obj[key];
                         target[key] = new Sound(res, callback);
+                    }
+                } else if(type === 'fonts') {
+                    for (let key in obj) {
+                        let res = obj[key];
+                        target[key] = new FontFaceObserver(res).load().then(callback);
                     }
                 } else {
                     throw `attempting to load unknown type ${type}`;

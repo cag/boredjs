@@ -10,9 +10,9 @@ let right_to_left = false;
 
 let default_style = {
     fontSize: 10,
-    font: 'sans-serif',
+    font: "'Roboto Mono', monospace",
     lineStyles: 'white black 1.0 round round',
-    fillStyle: 'rgb(26,47,158)'
+    fillStyle: 'rgba(26,47,158,0.5)'
 };
 
 let wordWrapText = function(text, width, style, context) {
@@ -50,7 +50,7 @@ let drawTextBox = function(x, y, width, height, lines_scrolled, text_obj, style,
 
     context.save();
 
-    context.font = style.font;
+    context.font = style.fontSize + 'px ' + style.font;
     context.textBaseline = "top";
 
     let styleDescriptors = style.lineStyles.split(' ');
@@ -89,7 +89,7 @@ export default {
     textBoxDialog(text, conf) {
         let {x, y, width, height, speed, style, context, callback} = conf;
         if(width == null) width = game.width();
-        if(height == null) height = Math.trunc(game.height() * .25);
+        if(height == null) height = Math.trunc(game.height() * .30);
         if(x == null) x = 0;
         if(y == null) y = game.height() - height;
         if(speed == null) speed = 16;
